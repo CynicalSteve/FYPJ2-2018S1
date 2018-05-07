@@ -2,10 +2,10 @@ Mono path[0] = 'C:/Users/syong/OneDrive/School/FYPJ2/FYPJ2-2018S1/FYPJ2 Unity - 
 Mono path[1] = 'C:/Users/syong/OneDrive/School/FYPJ2/FYPJ2-2018S1/FYPJ2 Unity - Fireant/EXE test/GameTest_Data/Mono'
 Mono config path = 'C:/Users/syong/OneDrive/School/FYPJ2/FYPJ2-2018S1/FYPJ2 Unity - Fireant/EXE test/GameTest_Data/Mono/etc'
 PlayerConnection initialized from C:/Users/syong/OneDrive/School/FYPJ2/FYPJ2-2018S1/FYPJ2 Unity - Fireant/EXE test/GameTest_Data (debug = 0)
-PlayerConnection initialized network socket : 0.0.0.0 55082
-Multi-casting "[IP] 25.29.50.198 [Port] 55082 [Flags] 2 [Guid] 165287575 [EditorId] 2969564683 [Version] 1048832 [Id] WindowsPlayer(DESKTOP-RPRDEO9) [Debug] 0" to [225.0.0.222:54997]...
-Started listening to [0.0.0.0:55082]
-PlayerConnection already initialized - listening to [0.0.0.0:55082]
+PlayerConnection initialized network socket : 0.0.0.0 55267
+Multi-casting "[IP] 192.168.1.5 [Port] 55267 [Flags] 2 [Guid] 3367088460 [EditorId] 1054513516 [Version] 1048832 [Id] WindowsPlayer(DESKTOP-RPRDEO9) [Debug] 0" to [225.0.0.222:54997]...
+Started listening to [0.0.0.0:55267]
+PlayerConnection already initialized - listening to [0.0.0.0:55267]
 Player data archive not found at `C:/Users/syong/OneDrive/School/FYPJ2/FYPJ2-2018S1/FYPJ2 Unity - Fireant/EXE test/GameTest_Data/data.unity3d`, using local filesystemInitialize engine version: 5.6.3f1 (d3101c3b8468)
 GfxDevice: creating device client; threaded=1
 Direct3D:
@@ -25,16 +25,16 @@ Platform assembly: C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity
 Loading C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity - Fireant\EXE test\GameTest_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity - Fireant\EXE test\GameTest_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity - Fireant\EXE test\GameTest_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.208 seconds
+- Completed reload, in  0.031 seconds
 Platform assembly: C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity - Fireant\EXE test\GameTest_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\syong\OneDrive\School\FYPJ2\FYPJ2-2018S1\FYPJ2 Unity - Fireant\EXE test\GameTest_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 2.005335 ms
+UnloadTime: 123.936745 ms
 Setting up 4 worker threads for Enlighten.
-  Thread -> id: 1844 -> priority: 1 
-  Thread -> id: 2b88 -> priority: 1 
-  Thread -> id: 4bfc -> priority: 1 
-  Thread -> id: 480c -> priority: 1 
+  Thread -> id: 51f0 -> priority: 1 
+  Thread -> id: c98 -> priority: 1 
+  Thread -> id: 4248 -> priority: 1 
+  Thread -> id: 4bd0 -> priority: 1 

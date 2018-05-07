@@ -28,7 +28,7 @@ public class CharacterObject : MonoBehaviour {
     }
     
     // Update is called once per frame
-    void Update()
+    public void MainCharacterUpdate()
     {
         if (Input.GetKey(KeyCode.W))
         {

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class DisplayGUI : MonoBehaviour {
-    
+
     //Display things on GUI
     //This is purely for debugging purposes only, do not place any game UI elements here
 
@@ -11,11 +11,13 @@ public class DisplayGUI : MonoBehaviour {
 
     void Update()
     {
+        //Display FPS
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
     }
 
     void OnGUI()
     {
+        //Display FPS
         int w = Screen.width, h = Screen.height;
 
         GUIStyle style = new GUIStyle();
