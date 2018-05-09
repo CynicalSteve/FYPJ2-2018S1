@@ -7,6 +7,8 @@ public class playerfire : MonoBehaviour
     [SerializeField]
     GameObject bulletObj;//points to bullet pref
                          // Use this for initialization
+    float destroybullet = 0;
+                       
     void Start()
     {
 
@@ -15,9 +17,10 @@ public class playerfire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(bulletObj, transform.position, transform.rotation);
         }
+        Destroy(gameObject, 3);
     }
 }
