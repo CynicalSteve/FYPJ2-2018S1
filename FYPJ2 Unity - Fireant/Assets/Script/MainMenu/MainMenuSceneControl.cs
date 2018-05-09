@@ -24,7 +24,9 @@ public class MainMenuSceneControl : MonoBehaviour {
 
         //Declare the gameobect screens and put them into the array
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_SPLASHSCREEN] = GameObject.FindGameObjectWithTag("SplashScreen");
+
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU] = GameObject.FindGameObjectWithTag("MainScreen");
+        ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU].SetActive(false);
     }
 	
 	// Update is called once per frame
