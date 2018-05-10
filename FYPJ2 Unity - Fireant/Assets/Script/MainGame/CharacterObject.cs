@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterObject : MonoBehaviour {
-    
+
     [SerializeField]
     uint characterMovementSpeed = 10;
 
@@ -26,7 +26,6 @@ public class CharacterObject : MonoBehaviour {
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
     }
-    
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
