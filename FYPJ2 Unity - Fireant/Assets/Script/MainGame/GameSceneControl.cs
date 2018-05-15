@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneControl : MonoBehaviour {
+public class GameSceneControl : MonoBehaviour {
 
     enum GameStates
     {
@@ -11,12 +11,21 @@ public class SceneControl : MonoBehaviour {
     }
 
     CharacterObject theCharacter;
+    EnemyManager enemyManager;
     GameStates currentGameState;
+
+    private void Awake()
+    {
+        //Seed random
+        Random.InitState((int)System.DateTime.Now.Ticks));
+    }
 
     // Use this for initialization
     void Start () {
        theCharacter = GameObject.FindGameObjectWithTag("MainCharacter").GetComponent<CharacterObject>();
-        currentGameState = GameStates.STATE_RUNNING;
+       enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+
+       currentGameState = GameStates.STATE_RUNNING;
     }
 	
 	// Update is called once per frame
@@ -25,6 +34,7 @@ public class SceneControl : MonoBehaviour {
         if (currentGameState == GameStates.STATE_RUNNING)
         {
             theCharacter.MainCharacterUpdate();
+            enemyManager.EnemyManagerUpdate();
 
             if (Input.GetKeyDown(KeyCode.P))
             {

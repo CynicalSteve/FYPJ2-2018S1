@@ -6,18 +6,18 @@ using UnityEngine.UI;
 public class CharacterObject : MonoBehaviour {
 
     [SerializeField]
-    uint characterMovementSpeed = 10;
+    float characterMovementSpeed = 10;
 
     [SerializeField]
-    uint characterHealth = 100;
+    float characterHealth = 100;
 
     [SerializeField]
-    uint characterAttackSpeed = 10;
+    float characterAttackSpeed = 10;
 
     [SerializeField]
-    uint characterAttackDamage = 10;
+    float characterAttackDamage = 10;
 
-    GeneralMovement generalMovementScript = new GeneralMovement();
+    GeneralMovement generalMovementScript;
     Image characterTexture;
 
     // Use this for initialization
@@ -61,37 +61,37 @@ public class CharacterObject : MonoBehaviour {
         return transform.position;
     }
     
-    public uint GetCharacterMovementSpeed()
+    public float GetCharacterMovementSpeed()
     {
         return characterMovementSpeed;
     }
 
-    public void SetCharacterMovementSpeed(uint newMovementSpeed)
+    public void SetCharacterMovementSpeed(float newMovementSpeed)
     {
         characterMovementSpeed = newMovementSpeed;
     }
     
-    public uint GetCharacterHealth()
+    public float GetCharacterHealth()
     {
         return characterHealth;
     }
 
-    public void SetCharacterHealth(uint newHealth)
+    public void SetCharacterHealth(float newHealth)
     {
         characterHealth = newHealth;
     }
     
-    public uint GetCharacterAttackSpeed()
+    public float GetCharacterAttackSpeed()
     {
         return characterAttackSpeed;
     }
 
-    public void SetCharacterAttackSpeed(uint newAttackSpeed)
+    public void SetCharacterAttackSpeed(float newAttackSpeed)
     {
         characterAttackSpeed = newAttackSpeed;
     }
     
-    public uint GetCharacterAttackDamage()
+    public float GetCharacterAttackDamage()
     {
         return characterAttackDamage;
     }

@@ -22,7 +22,7 @@ public class MainMenuSceneControl : MonoBehaviour {
 	void Start () {
         currentMenuScreen = MAIN_MENU_SCREEN.SCREEN_SPLASHSCREEN;
 
-        //Declare the gameobect screens and put them into the array
+        //Declare the gameobject screens and put them into the array
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_SPLASHSCREEN] = GameObject.FindGameObjectWithTag("SplashScreen");
 
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU] = GameObject.FindGameObjectWithTag("MainScreen");
