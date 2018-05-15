@@ -8,7 +8,6 @@ public class EnemyManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Random.InitState((int)System.DateTime.Now.Ticks);
 
         for (short i = 0; i < 5; ++i)
         {
