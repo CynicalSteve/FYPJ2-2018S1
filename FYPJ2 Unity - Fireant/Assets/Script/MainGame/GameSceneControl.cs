@@ -17,7 +17,7 @@ public class GameSceneControl : MonoBehaviour {
     private void Awake()
     {
         //Seed random
-        Random.InitState((int)System.DateTime.Now.Ticks));
+        Random.InitState((int)System.DateTime.Now.Ticks);
     }
 
     // Use this for initialization
@@ -32,7 +32,7 @@ public class GameSceneControl : MonoBehaviour {
 	void Update () {
 
         if (currentGameState == GameStates.STATE_RUNNING)
-        {
+        { 
             theCharacter.MainCharacterUpdate();
             enemyManager.EnemyManagerUpdate();
 
