@@ -32,7 +32,7 @@ public class GameSceneControl : MonoBehaviour {
 	void Update () {
 
         if (currentGameState == GameStates.STATE_RUNNING)
-        {
+        { 
             theCharacter.MainCharacterUpdate();
             enemyManager.EnemyManagerUpdate();
 
