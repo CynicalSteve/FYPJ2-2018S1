@@ -13,7 +13,7 @@ public class GameSceneControl : MonoBehaviour {
     CharacterObject theCharacter;
     EnemyManager enemyManager;
     GameStates currentGameState;
-
+    
     private void Awake()
     {
         //Seed random

@@ -19,6 +19,8 @@ public class CharacterObject : MonoBehaviour {
 
     GeneralMovement generalMovementScript;
     Image characterTexture;
+    
+    List<GameObject> BulletList = new List<GameObject>();
 
     // Use this for initialization
     void Start()
@@ -29,6 +31,20 @@ public class CharacterObject : MonoBehaviour {
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Vector3 a = new Vector3(0, 0, -90);
+            //Create a bullet and add it as child to Scene control and object List
+            GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
+
+            BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+            
+            BulletObj.transform.Rotate(a);
+            BulletObj.GetComponent<BulletObject>().BulletObjectInit();
+
+            BulletList.Add(BulletObj);
+        }
+
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += transform.up * characterMovementSpeed * Time.deltaTime;
@@ -48,6 +64,12 @@ public class CharacterObject : MonoBehaviour {
         {
             //transform.position -= transform.up * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
+        }
+
+        //Update bullets shot by player
+        for(int i = 0; i < BulletList.Count; ++i)
+        {
+            BulletList[i].GetComponent<BulletObject>().BulletObjectUpdate();
         }
     }
 
