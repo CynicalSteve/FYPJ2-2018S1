@@ -17,7 +17,7 @@ public class GameSceneControl : MonoBehaviour {
     private void Awake()
     {
         //Seed random
-        Random.InitState((int)System.DateTime.Now.Ticks));
+        Random.InitState((int)System.DateTime.Now.Ticks);
     }
 
     // Use this for initialization
