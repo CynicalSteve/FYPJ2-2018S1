@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterObject : MonoBehaviour {
-
+    private Animator animator; 
     [SerializeField]
     float characterMovementSpeed = 10;
 
@@ -23,12 +23,14 @@ public class CharacterObject : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
+        animator.SetInteger("states", 1);
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += transform.up * characterMovementSpeed * Time.deltaTime;
@@ -43,11 +45,17 @@ public class CharacterObject : MonoBehaviour {
         {
             //transform.position -= transform.right * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
+            animator.SetInteger("states", 2);
         }
         if (Input.GetKey(KeyCode.D))
         {
             //transform.position -= transform.up * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
+            animator.SetInteger("states", 0);
+        }
+        if(Input.GetKey(KeyCode.Z))
+        {
+            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 100);
         }
     }
 
