@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GeneralMovement : MonoBehaviour {
-
-    private const float EPSILON = 0.3f;
+    
     Vector3 left = new Vector3(-1, 0, 0);
     Vector3 right = new Vector3(1, 0, 0);
     Vector3 up = new Vector3(0, 1, 0);
@@ -32,16 +31,17 @@ public class GeneralMovement : MonoBehaviour {
     }
 
     //Move to a specific location
-    public void moveTo(Image theImage, float movementSpeed, Vector3 Destination)
+    public bool moveTo(Image theImage, float movementSpeed, Vector3 Destination)
     {
-        Vector3 dir = Destination - theImage.transform.position;
-        
-        if(dir.magnitude <= EPSILON)
+        Vector3 vectorPos = Vector3.MoveTowards(theImage.transform.position, Destination, movementSpeed * Time.deltaTime);
+
+        if (vectorPos == theImage.transform.position)
         {
-            return;
+            return true;
         }
 
-        theImage.transform.position += dir.normalized * movementSpeed * Time.deltaTime;
+        theImage.transform.position = vectorPos;
+        return false;
     }
 
     public void moveUp(GameObject theGameObject, float movementSpeed)
@@ -67,15 +67,14 @@ public class GeneralMovement : MonoBehaviour {
     //Move to a specific location, returns true if it has reached the destination
     public bool moveTo(GameObject theGameObject, float movementSpeed, Vector3 Destination)
     {
-        Vector3 dir = Destination - theGameObject.transform.position;
+        Vector3 vectorPos = Vector3.MoveTowards(theGameObject.transform.position, Destination, movementSpeed * Time.deltaTime);
 
-        if (dir.magnitude <= EPSILON)
+        if(vectorPos == theGameObject.transform.position)
         {
             return true;
         }
 
-        theGameObject.transform.position += dir.normalized * movementSpeed * Time.deltaTime;
-
+        theGameObject.transform.position = vectorPos;
         return false;
     }
 }

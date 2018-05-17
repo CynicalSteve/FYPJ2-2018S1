@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class SceneTransition : MonoBehaviour {
-
+    
     public void ToGame()
     {
         SceneManager.LoadScene("Main Scene");

@@ -61,7 +61,7 @@ public class CharacterObject : MonoBehaviour {
             //Add bullet obj to list
             BulletList.Add(BulletObj);
         }
-        
+
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += transform.up * characterMovementSpeed * Time.deltaTime;
