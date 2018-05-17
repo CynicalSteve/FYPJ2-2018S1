@@ -34,17 +34,31 @@ public class CharacterObject : MonoBehaviour {
     {
         animator.SetInteger("states", 1);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        //Shoot
+        if (Input.GetMouseButtonDown(0))
         {
-            Vector3 a = new Vector3(0, 0, -90);
             //Create a bullet and add it as child to Scene control and object List
             GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
-
-            BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
             
-            BulletObj.transform.Rotate(a);
+            //Init Bullet variables
             BulletObj.GetComponent<BulletObject>().BulletObjectInit();
 
+            //Set the pos of bullet to the character pos
+            BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+
+            //Get mouse position by converting the pos from screen space to world space
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0;
+
+            //Rotate the bullet in the direction of destination
+            Vector3 normalizedDir = (mousePos - BulletObj.transform.position).normalized;
+            normalizedDir.z = 0;
+            BulletObj.transform.up = normalizedDir; 
+
+            //Set the bullet's destination to cursor
+            BulletObj.GetComponent<BulletObject>().SetDestination(mousePos);
+
+            //Add bullet obj to list
             BulletList.Add(BulletObj);
         }
         
@@ -78,7 +92,12 @@ public class CharacterObject : MonoBehaviour {
         //Update bullets shot by player
         for(int i = 0; i < BulletList.Count; ++i)
         {
-            BulletList[i].GetComponent<BulletObject>().BulletObjectUpdate();
+            GameObject BulletObj = BulletList[i];
+
+            if (BulletObj.activeInHierarchy)
+            {
+                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+            }
         }
     }
 
