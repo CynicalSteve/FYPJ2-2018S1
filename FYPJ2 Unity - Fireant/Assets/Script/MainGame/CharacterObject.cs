@@ -84,9 +84,9 @@ public class CharacterObject : MonoBehaviour {
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
             animator.SetInteger("states", 0);
         }
-        if(Input.GetKey(KeyCode.Z))
+        if(Input.GetKeyDown(KeyCode.Space))
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 100);
+            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 500);
         }
 
         //Update bullets shot by player
