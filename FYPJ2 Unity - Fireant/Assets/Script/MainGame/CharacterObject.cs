@@ -101,6 +101,20 @@ public class CharacterObject : MonoBehaviour {
         }
     }
 
+    //Collision
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "GenericBullet")
+        {
+            if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+            {
+                collision.gameObject.SetActive(false);
+                characterHealth -= 10;
+            }
+        }
+    }
+
+    //Getters & Setters
     public void setPosition(Vector2 newPosition)
     {
         transform.position = newPosition;
@@ -124,6 +138,14 @@ public class CharacterObject : MonoBehaviour {
     public float GetCharacterHealth()
     {
         return characterHealth;
+    }
+    public void DecreaseCharacterHealth(float reduceAmount)
+    {
+        characterHealth -= reduceAmount;
+    }
+    public void IncreaseCharacterHealth(float increaseAmount)
+    {
+        characterHealth += increaseAmount;
     }
 
     public void SetCharacterHealth(float newHealth)

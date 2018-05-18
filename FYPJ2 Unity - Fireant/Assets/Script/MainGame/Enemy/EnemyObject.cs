@@ -13,6 +13,19 @@ public class EnemyObject : MonoBehaviour {
     float Health = 100;
     [SerializeField]
     float MovementSpeed = 10;
+    [SerializeField]
+    float secondsBetweenShots = 1;
+
+    float fireRateTimer = 0;
+    bool canShoot = true;
+
+    STATE_ENEMY enemyState;
+
+    CharacterObject theCharacter;
+    GeneralMovement generalMovementScript;
+    Image enemyTexture;
+
+    List<GameObject> BulletList = new List<GameObject>();
 
     enum STATE_ENEMY
     {
@@ -22,12 +35,6 @@ public class EnemyObject : MonoBehaviour {
 
         TOTAL_ENEMY_STATES
     }
-
-    STATE_ENEMY enemyState;
-
-    CharacterObject theCharacter;
-    GeneralMovement generalMovementScript;
-    Image enemyTexture;
 
     // Use this for initialization
     public void EnemyObjectInit() {
@@ -76,6 +83,21 @@ public class EnemyObject : MonoBehaviour {
             case STATE_ENEMY.STATE_ATTACK:
                 {
                     //Attack the player (spawn bullet)
+                    if(canShoot)
+                    {
+                        Shoot();
+                        canShoot = false;
+                    }
+                    else
+                    {
+                        fireRateTimer += Time.deltaTime;
+
+                        if(fireRateTimer >= secondsBetweenShots)
+                        {
+                            canShoot = true;
+                            fireRateTimer = 0;
+                        }
+                    }
 
                     break;
                 }
@@ -84,5 +106,70 @@ public class EnemyObject : MonoBehaviour {
                 break;
         }
 
-	}
+        //Update bullets shot by enemy
+        for (int i = 0; i < BulletList.Count; ++i)
+        {
+            GameObject BulletObj = BulletList[i];
+
+            if (BulletObj.activeInHierarchy)
+            {
+                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+            }
+        }
+    }
+
+    void Shoot()
+    {
+        //Create a bullet and add it as child to Scene control and object List
+        GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
+
+        //Init Bullet variables
+        BulletObj.GetComponent<BulletObject>().BulletObjectInit();
+
+        //Set the bullet to be able to hit player
+        BulletObj.GetComponent<BulletObject>().CanHitPlayer = true;
+
+        //Set the pos of bullet to the enemy pos
+        BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+
+        //Rotate the bullet in the direction of destination
+        Vector3 normalizedDir = (theCharacter.transform.position - BulletObj.transform.position).normalized;
+        normalizedDir.z = 0;
+        BulletObj.transform.up = normalizedDir;
+
+        //Set the bullet's destination to cursor
+        BulletObj.GetComponent<BulletObject>().SetDestination(theCharacter.transform.position);
+
+        //Add bullet obj to list
+        BulletList.Add(BulletObj);
+    }
+
+    //Collsion
+    //Collision
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "GenericBullet")
+        {
+            collision.gameObject.SetActive(false);
+            Health -= 10;
+        }
+    }
+
+    //Getters & setters
+    public float GetHealth()
+    {
+        return Health;
+    }
+    public void SetHealth(float newHealth)
+    {
+        Health = newHealth;
+    }
+    public void DecreaseHealth(float reduceAmount)
+    {
+        Health -= reduceAmount;
+    }
+    public void IncreaseHealth(float increaseAmount)
+    {
+        Health += increaseAmount;
+    }
 }
