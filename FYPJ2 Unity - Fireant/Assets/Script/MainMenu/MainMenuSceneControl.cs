@@ -31,7 +31,7 @@ public class MainMenuSceneControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(currentMenuScreen == MAIN_MENU_SCREEN.SCREEN_SPLASHSCREEN && (Input.anyKeyDown || Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2)))
+		if(currentMenuScreen == MAIN_MENU_SCREEN.SCREEN_SPLASHSCREEN && Input.anyKeyDown)
         {
             ChangeToMainScreen();
         }

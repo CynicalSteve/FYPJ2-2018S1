@@ -30,13 +30,15 @@ public class EnemyObject : MonoBehaviour {
     Image enemyTexture;
 
     // Use this for initialization
-    void Start () {
+    public void EnemyObjectInit() {
         //gameObject.SetActive(false);
         enemyState = STATE_ENEMY.STATE_IDLE;
 
         theCharacter = GameObject.FindGameObjectWithTag("MainCharacter").GetComponent<CharacterObject>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         enemyTexture = GetComponent<Image>();
+
+        gameObject.transform.Translate(0, theCharacter.transform.position.y, 0);
     }
 	
 	public void EnemyObjectUpdate() {

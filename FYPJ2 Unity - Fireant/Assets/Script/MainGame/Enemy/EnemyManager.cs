@@ -7,16 +7,17 @@ public class EnemyManager : MonoBehaviour {
     List<GameObject> EnemyList = new List<GameObject>();
 
     // Use this for initialization
-    void Start () {
+    public void EnemyManagerInit() {
 
         for (short i = 0; i < 5; ++i)
         {
-            GameObject enemyObj = Instantiate(Resources.Load("TestEnemy"), gameObject.transform, true) as GameObject;
-            enemyObj.transform.position.Set(Random.Range(0, Screen.width), Random.Range(0, Screen.height), 0);
+            Vector2 spawnPosition = new Vector2(Random.Range(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).y, Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y), 0);
+
+            GameObject enemyObj = Instantiate(Resources.Load("TestEnemy"), spawnPosition, transform.rotation, transform) as GameObject;
+            enemyObj.GetComponent<EnemyObject>().EnemyObjectInit();
 
             EnemyList.Add(enemyObj);
         }
-
     }
 	
     public void EnemyManagerUpdate()

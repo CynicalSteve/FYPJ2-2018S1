@@ -13,7 +13,7 @@ public class GameSceneControl : MonoBehaviour {
     CharacterObject theCharacter;
     EnemyManager enemyManager;
     GameStates currentGameState;
-
+    
     private void Awake()
     {
         //Seed random
@@ -26,6 +26,8 @@ public class GameSceneControl : MonoBehaviour {
        enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
 
        currentGameState = GameStates.STATE_RUNNING;
+
+       enemyManager.EnemyManagerInit();
     }
 	
 	// Update is called once per frame
