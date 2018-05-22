@@ -30,24 +30,6 @@ public class BulletObject : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-
-        //for(int i = 0; i < enemyManager.EnemyList.Count; ++i)
-        //{
-        //    if((enemyManager.EnemyList[i].transform.position - gameObject.transform.position).magnitude <= 0.3f)
-        //    {
-        //        gameObject.SetActive(false);
-        //        enemyManager.EnemyList[i].GetComponent<EnemyObject>().DecreaseHealth(10);
-        //    }
-        //}
-
-        //if(CanHitPlayer)
-        //{
-        //    if ((theCharacter.transform.position - gameObject.transform.position).magnitude <= 0.3f)
-        //    {
-        //        gameObject.SetActive(false);
-        //        theCharacter.GetComponent<CharacterObject>().DecreaseCharacterHealth(10);
-        //    }
-        //}
     }
 
     public void SetDestination(Vector3 newDestination)

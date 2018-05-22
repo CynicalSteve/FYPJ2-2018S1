@@ -12,6 +12,8 @@ public class GameSceneControl : MonoBehaviour {
 
     CharacterObject theCharacter;
     EnemyManager enemyManager;
+    PickupManager pickupManager;
+
     GameStates currentGameState;
     
     private void Awake()
@@ -21,13 +23,14 @@ public class GameSceneControl : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-       theCharacter = GameObject.FindGameObjectWithTag("MainCharacter").GetComponent<CharacterObject>();
-       enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+    void Start() {
+        theCharacter = GameObject.FindGameObjectWithTag("MainCharacter").GetComponent<CharacterObject>();
+        enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        pickupManager = GameObject.FindGameObjectWithTag("PickupManager").GetComponent<PickupManager>();
 
-       currentGameState = GameStates.STATE_RUNNING;
+        currentGameState = GameStates.STATE_RUNNING;
 
-       enemyManager.EnemyManagerInit();
+        enemyManager.EnemyManagerInit();
     }
 	
 	// Update is called once per frame

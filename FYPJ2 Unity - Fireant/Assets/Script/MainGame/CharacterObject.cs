@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,15 +13,35 @@ public class CharacterObject : MonoBehaviour {
     float characterHealth = 100;
 
     [SerializeField]
-    float characterAttackSpeed = 10;
-
+    float characterHealthLimit = 100;
+    
     [SerializeField]
     float characterAttackDamage = 10;
+
+    [SerializeField]
+    float secondsBetweenShots = 1.0f;
+
+    [SerializeField]
+    float InvincibilityTimeLimit = 5;
+
+    public enum CHARACTER_STATE
+    {
+        CHARACTERSTATE_NORMAL,
+        CHARACTERSTATE_INVINCIBLE,
+
+        TOTAL_CHARACTERSTATE
+    }
+
+    CHARACTER_STATE characterState;
 
     GeneralMovement generalMovementScript;
     Image characterTexture;
     
     List<GameObject> BulletList = new List<GameObject>();
+
+    float InvincibilityTimer = 0;
+    float fireRateTimer = 0;
+    bool canShoot = true;
 
     // Use this for initialization
     void Start()
@@ -35,31 +56,25 @@ public class CharacterObject : MonoBehaviour {
         animator.SetInteger("states", 1);
 
         //Shoot
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            //Create a bullet and add it as child to Scene control and object List
-            GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
-            
-            //Init Bullet variables
-            BulletObj.GetComponent<BulletObject>().BulletObjectInit();
+            if (canShoot)
+            {
+                Shoot();
+                canShoot = false;
+            }
+        }
+        {
+            if (!canShoot)
+            {
+                fireRateTimer += Time.deltaTime;
 
-            //Set the pos of bullet to the character pos
-            BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
-
-            //Get mouse position by converting the pos from screen space to world space
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-
-            //Rotate the bullet in the direction of destination
-            Vector3 normalizedDir = (mousePos - BulletObj.transform.position).normalized;
-            normalizedDir.z = 0;
-            BulletObj.transform.up = normalizedDir; 
-
-            //Set the bullet's destination to cursor
-            BulletObj.GetComponent<BulletObject>().SetDestination(mousePos);
-
-            //Add bullet obj to list
-            BulletList.Add(BulletObj);
+                if (fireRateTimer >= secondsBetweenShots)
+                {
+                    canShoot = true;
+                    fireRateTimer = 0;
+                }
+            }
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -99,18 +114,95 @@ public class CharacterObject : MonoBehaviour {
                 BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
             }
         }
+
+        //Update Character States
+        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        {
+            InvincibilityTimer += Time.deltaTime;
+
+            if(InvincibilityTimer >= InvincibilityTimeLimit)
+            {
+                InvincibilityTimer = 0;
+                characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
+            }
+        }
+    }
+
+    private void Shoot()
+    {
+        //Create a bullet and add it as child to Scene control and object List
+        GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
+
+        //Init Bullet variables
+        BulletObj.GetComponent<BulletObject>().BulletObjectInit();
+
+        //Set the pos of bullet to the character pos
+        BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+
+        //Get mouse position by converting the pos from screen space to world space
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;
+
+        //Rotate the bullet in the direction of destination
+        Vector3 normalizedDir = (mousePos - BulletObj.transform.position).normalized;
+        normalizedDir.z = 0;
+        BulletObj.transform.up = normalizedDir;
+
+        //Set the bullet's destination to cursor
+        BulletObj.GetComponent<BulletObject>().SetDestination(mousePos);
+
+        //Add bullet obj to list
+        BulletList.Add(BulletObj);
     }
 
     //Collision
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "GenericBullet")
+        switch (collision.gameObject.tag)
         {
-            if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-            {
-                collision.gameObject.SetActive(false);
-                characterHealth -= 10;
-            }
+            case "GenericBullet":
+                {
+                    if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+                    {
+                        collision.gameObject.SetActive(false);
+
+                        if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                        {
+                            characterHealth -= 10;
+                        }
+                    }
+
+                    goto default;
+                }
+            case "InvincibilityPowerup":
+                {
+                    characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
+                    Destroy(collision.gameObject);
+
+                    goto default;
+                }
+            case "HealthPowerup":
+                {
+                    if(characterHealth >= characterHealthLimit)
+                    {
+                        return;
+                    }
+
+                    characterHealth += 20;
+
+                    if(characterHealth > characterHealthLimit)
+                    {
+                        characterHealth = characterHealthLimit;
+                    }
+
+                    Destroy(collision.gameObject);
+
+                    goto default;
+                }
+            default:
+                {
+                    return;
+                }
         }
     }
 
@@ -151,16 +243,6 @@ public class CharacterObject : MonoBehaviour {
     public void SetCharacterHealth(float newHealth)
     {
         characterHealth = newHealth;
-    }
-    
-    public float GetCharacterAttackSpeed()
-    {
-        return characterAttackSpeed;
-    }
-
-    public void SetCharacterAttackSpeed(float newAttackSpeed)
-    {
-        characterAttackSpeed = newAttackSpeed;
     }
     
     public float GetCharacterAttackDamage()
