@@ -58,11 +58,13 @@ public class CharacterObject : MonoBehaviour {
     {
         animator.SetInteger("states", 1);
 
+        //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
         Vector3 mousePos= Camera.main.ScreenToWorldPoint(screenPoint);
         gameObject.transform.GetChild(0).transform.position = mousePos;
 
+        //Character faces direction of crosshair
         if (mousePos.x < gameObject.transform.position.x && !facingLeft)
         {
             gameObject.transform.right = -gameObject.transform.right;
@@ -74,8 +76,8 @@ public class CharacterObject : MonoBehaviour {
             facingLeft = false;
         }
 
-            //Shoot
-            if (Input.GetMouseButton(0))
+        //Shoot
+        if (Input.GetMouseButton(0))
         {
             if (canShoot)
             {
