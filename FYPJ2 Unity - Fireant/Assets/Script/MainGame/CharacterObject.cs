@@ -112,7 +112,7 @@ public class CharacterObject : MonoBehaviour {
         {
             //transform.position -= transform.right * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
-            animator.SetInteger("states", 2);
+            animator.SetInteger("states", 0);
         }
         if (Input.GetKey(KeyCode.D))
         {
