@@ -26,7 +26,6 @@ public class EnemyObject : MonoBehaviour {
     Image enemyTexture;
     bool falling = true;
 
-    List<GameObject> BulletList = new List<GameObject>();
 
     enum STATE_ENEMY
     {
@@ -109,16 +108,6 @@ public class EnemyObject : MonoBehaviour {
                 break;
         }
 
-        //Update bullets shot by enemy
-        for (int i = 0; i < BulletList.Count; ++i)
-        {
-            GameObject BulletObj = BulletList[i];
-
-            if (BulletObj.activeInHierarchy)
-            {
-                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
-            }
-        }
     }
 
     void Shoot()
@@ -144,7 +133,7 @@ public class EnemyObject : MonoBehaviour {
         BulletObj.GetComponent<BulletObject>().SetDestination(theCharacter.transform.position);
 
         //Add bullet obj to list
-        BulletList.Add(BulletObj);
+        gameObject.transform.parent.GetComponent<EnemyManager>().BulletList.Add(BulletObj);
     }
 
     //Collsion
@@ -160,7 +149,7 @@ public class EnemyObject : MonoBehaviour {
 
                 if(Health <= 0)
                 {
-                    gameObject.SetActive(false);
+                    Destroy(gameObject);
                 }
             }
         }

@@ -6,6 +6,7 @@ public class EnemyManager : MonoBehaviour {
 
     public List<GameObject> EnemyList = new List<GameObject>();
 
+    public List<GameObject> BulletList = new List<GameObject>();
     // Use this for initialization
     public void EnemyManagerInit() {
 
@@ -27,5 +28,15 @@ public class EnemyManager : MonoBehaviour {
             EnemyList[i].GetComponent<EnemyObject>().EnemyObjectUpdate();
         }
 
+        //Update bullets shot by enemy
+        for (int i = 0; i < BulletList.Count; ++i)
+        {
+            GameObject BulletObj = BulletList[i];
+
+            if (BulletObj.activeInHierarchy)
+            {
+                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+            }
+        }
     }
 }
