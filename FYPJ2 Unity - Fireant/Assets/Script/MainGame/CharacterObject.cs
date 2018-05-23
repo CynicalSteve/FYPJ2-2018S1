@@ -110,13 +110,11 @@ public class CharacterObject : MonoBehaviour {
         {
             //transform.position -= transform.right * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
-            animator.SetInteger("states", 2);
         }
         if (Input.GetKey(KeyCode.D))
         {
             //transform.position -= transform.up * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
-            animator.SetInteger("states", 0);
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
