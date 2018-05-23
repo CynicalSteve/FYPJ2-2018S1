@@ -24,6 +24,7 @@ public class EnemyObject : MonoBehaviour {
     CharacterObject theCharacter;
     GeneralMovement generalMovementScript;
     Image enemyTexture;
+    bool falling = true;
 
     List<GameObject> BulletList = new List<GameObject>();
 
@@ -51,6 +52,8 @@ public class EnemyObject : MonoBehaviour {
 	public void EnemyObjectUpdate() {
 
         float playerEnemyDistance = (theCharacter.transform.position - gameObject.transform.position).magnitude;
+
+       
 
         switch (enemyState)
         {
@@ -160,6 +163,11 @@ public class EnemyObject : MonoBehaviour {
                     gameObject.SetActive(false);
                 }
             }
+        }
+
+        if((collision.gameObject.name == "ground"))
+        {
+            falling = false;
         }
     }
 

@@ -44,6 +44,19 @@ public class GeneralMovement : MonoBehaviour {
         return false;
     }
 
+    public bool moveToXPos(Image theImage, float movementSpeed, Vector3 Destination)
+    {
+        Vector3 vectorPos = Vector3.MoveTowards(theImage.transform.position, Destination, movementSpeed * Time.deltaTime);
+
+        if (vectorPos.x == theImage.transform.position.x)
+        {
+            return true;
+        }
+
+        theImage.transform.position.Set(vectorPos.x, theImage.transform.position.y, theImage.transform.position.z);
+        return false;
+    }
+
     public void moveUp(GameObject theGameObject, float movementSpeed)
     {
         theGameObject.transform.position += up * movementSpeed * Time.deltaTime;
@@ -51,12 +64,12 @@ public class GeneralMovement : MonoBehaviour {
 
     public void moveDown(GameObject theGameObject, float movementSpeed)
     {
-        theGameObject.transform.position -= down * movementSpeed * Time.deltaTime;
+        theGameObject.transform.position += down * movementSpeed * Time.deltaTime;
     }
 
     public void moveLeft(GameObject theGameObject, float movementSpeed)
     {
-        theGameObject.transform.position -= left * movementSpeed * Time.deltaTime;
+        theGameObject.transform.position += left * movementSpeed * Time.deltaTime;
     }
 
     public void moveRight(GameObject theGameObject, float movementSpeed)
@@ -75,6 +88,20 @@ public class GeneralMovement : MonoBehaviour {
         }
 
         theGameObject.transform.position = vectorPos;
+        return false;
+    }
+
+    //Move to a specific location, returns true if it has reached the destination
+    public bool moveToXPos(GameObject theGameObject, float movementSpeed, Vector3 Destination)
+    {
+        Vector3 vectorPos = Vector3.MoveTowards(theGameObject.transform.position, Destination, movementSpeed * Time.deltaTime);
+
+        if (vectorPos.x == theGameObject.transform.position.x)
+        {
+            return true;
+        }
+
+        theGameObject.transform.position.Set(vectorPos.x, theGameObject.transform.position.y, theGameObject.transform.position.z);
         return false;
     }
 }
