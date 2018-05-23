@@ -150,8 +150,16 @@ public class EnemyObject : MonoBehaviour {
     {
         if (collision.gameObject.tag == "GenericBullet")
         {
-            collision.gameObject.SetActive(false);
-            Health -= 10;
+            if (!collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+            {
+                collision.gameObject.SetActive(false);
+                Health -= 10;
+
+                if(Health <= 0)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
     }
 

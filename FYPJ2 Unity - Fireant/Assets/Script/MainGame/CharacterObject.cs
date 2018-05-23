@@ -43,20 +43,39 @@ public class CharacterObject : MonoBehaviour {
     float fireRateTimer = 0;
     bool canShoot = true;
 
+    bool facingLeft = false;
+
     // Use this for initialization
     void Start()
     {
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
+        gameObject.transform.GetChild(0).GetComponent<Image>();
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
         animator.SetInteger("states", 1);
 
-        //Shoot
-        if (Input.GetMouseButton(0))
+        Vector3 screenPoint = Input.mousePosition;
+        screenPoint.z = 10.0f; //distance of the plane from the camera
+        Vector3 mousePos= Camera.main.ScreenToWorldPoint(screenPoint);
+        gameObject.transform.GetChild(0).transform.position = mousePos;
+
+        if (mousePos.x < gameObject.transform.position.x && !facingLeft)
+        {
+            gameObject.transform.right = -gameObject.transform.right;
+            facingLeft = true;
+        }
+        else if (mousePos.x > gameObject.transform.position.x && facingLeft)
+        {
+            gameObject.transform.right = -gameObject.transform.right;
+            facingLeft = false;
+        }
+
+            //Shoot
+            if (Input.GetMouseButton(0))
         {
             if (canShoot)
             {
