@@ -23,7 +23,8 @@ public class CharacterObject : MonoBehaviour {
 
     [SerializeField]
     float InvincibilityTimeLimit = 5;
-
+    [SerializeField]
+    Text charhealth;
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -57,7 +58,7 @@ public class CharacterObject : MonoBehaviour {
     public void MainCharacterUpdate()
     {
         animator.SetInteger("states", 1);
-
+        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100"; 
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
@@ -75,9 +76,8 @@ public class CharacterObject : MonoBehaviour {
             gameObject.transform.right = -gameObject.transform.right;
             facingLeft = false;
         }
-
-        //Shoot
-        if (Input.GetMouseButton(0))
+        //Shoot Pistol
+        if (Input.GetMouseButtonDown(0))
         {
             if (canShoot)
             {
@@ -97,7 +97,27 @@ public class CharacterObject : MonoBehaviour {
                 }
             }
         }
+        //Shoot Machine Gun
+        //if (Input.GetMouseButton(0))
+        //{
+        //    if (canShoot)
+        //    {
+        //        Shoot();
+        //        canShoot = false;
+        //    }
+        //}
+        //{
+        //    if (!canShoot)
+        //    {
+        //        fireRateTimer += Time.deltaTime;
 
+        //        if (fireRateTimer >= secondsBetweenShots)
+        //        {
+        //            canShoot = true;
+        //            fireRateTimer = 0;
+        //        }
+        //    }
+        //}
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += transform.up * characterMovementSpeed * Time.deltaTime;
@@ -122,7 +142,7 @@ public class CharacterObject : MonoBehaviour {
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 500);
+            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
         }
 
         //Update bullets shot by player
