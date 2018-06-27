@@ -25,7 +25,10 @@ public class CharacterObject : MonoBehaviour {
     float InvincibilityTimeLimit = 5;
     [SerializeField]
     Text charhealth;
-
+    [SerializeField]
+    Text moneytext;
+    [SerializeField]
+    public float money=0;
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -50,9 +53,6 @@ public class CharacterObject : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        //Ignore collision with Enemy Layer
-        Physics2D.IgnoreLayerCollision(0, 9);
-
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
@@ -62,7 +62,8 @@ public class CharacterObject : MonoBehaviour {
     public void MainCharacterUpdate()
     {
         animator.SetInteger("states", 1);
-        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100"; 
+        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100";
+        moneytext.text = "Money : " + money.ToString();
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
@@ -203,29 +204,25 @@ public class CharacterObject : MonoBehaviour {
     //Collision
     void OnTriggerEnter2D(Collider2D other)
     {
-        //Projectile Layer
-        if (other.gameObject.layer == 8)
+        if (other.gameObject.tag == "GenericBullet")
         {
-            if (other.gameObject.tag == "GenericBullet")
+            if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
             {
-                if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-                {
-                    other.gameObject.SetActive(false);
+                other.gameObject.SetActive(false);
 
-                    if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
-                    {
-                        characterHealth -= 10;
-                    }
+                if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                {
+                    characterHealth -= 10;
                 }
             }
         }
     }
     
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         switch (collision.gameObject.tag)
         {
-           
             case "InvincibilityPowerup":
                 {
                     characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
@@ -251,7 +248,6 @@ public class CharacterObject : MonoBehaviour {
 
                     goto default;
                 }
-            
             default:
                 {
                     return;
