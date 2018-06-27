@@ -23,16 +23,20 @@ public class EnemyManager : MonoBehaviour {
 	
     public void EnemyManagerUpdate()
     {
-        for (int i = 0; i < EnemyList.Count; ++i)
+        foreach(GameObject Enemy in EnemyList)
         {
-            EnemyList[i].GetComponent<EnemyObject>().EnemyObjectUpdate();
+            if(!Enemy)
+            {
+                EnemyList.Remove(Enemy);
+                continue;
+            }
+
+            Enemy.GetComponent<EnemyObject>().EnemyObjectUpdate();
         }
 
         //Update bullets shot by enemy
-        for (int i = 0; i < BulletList.Count; ++i)
+        foreach (GameObject BulletObj in BulletList)
         {
-            GameObject BulletObj = BulletList[i];
-
             if (BulletObj.activeInHierarchy)
             {
                 BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();

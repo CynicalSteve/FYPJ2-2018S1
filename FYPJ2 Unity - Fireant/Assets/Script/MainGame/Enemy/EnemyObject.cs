@@ -55,9 +55,7 @@ public class EnemyObject : MonoBehaviour {
 	public void EnemyObjectUpdate() {
 
         float playerEnemyDistance = (theCharacter.transform.position - gameObject.transform.position).magnitude;
-
-       
-
+        
         switch (enemyState)
         {
             
@@ -140,23 +138,31 @@ public class EnemyObject : MonoBehaviour {
         gameObject.transform.parent.GetComponent<EnemyManager>().BulletList.Add(BulletObj);
     }
 
-    //Collsion
     //Collision
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.tag == "GenericBullet")
+        //Projectile Layer
+        if (other.gameObject.layer == 8)
         {
-            if (!collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+            if (other.gameObject.tag == "GenericBullet")
             {
-                collision.gameObject.SetActive(false);
-                Health -= 10;
-
-                if(Health <= 0)
+                if (!other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                 {
-                    Destroy(gameObject);
+                    other.gameObject.SetActive(false);
+                    Health -= 10;
+
+                    if (Health <= 0)
+                    {
+                        Destroy(gameObject);
+                    }
                 }
             }
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
 
         if((collision.gameObject.name == "ground"))
         {

@@ -206,29 +206,23 @@ public class CharacterObject : MonoBehaviour {
         //Projectile Layer
         if (other.gameObject.layer == 8)
         {
-            //Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-
-            if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+            if (other.gameObject.tag == "GenericBullet")
             {
-                other.gameObject.SetActive(false);
-
-                if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                 {
-                    characterHealth -= 10;
+                    other.gameObject.SetActive(false);
+
+                    if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                    {
+                        characterHealth -= 10;
+                    }
                 }
             }
         }
     }
-
-
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
-       
-        //Enemy layer
-        //else if (collision.gameObject.layer == 9)
-        //{
-        //}
-
         switch (collision.gameObject.tag)
         {
            
