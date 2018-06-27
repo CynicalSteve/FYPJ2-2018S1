@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
-public class CharacterObject : MonoBehaviour
-{
-    private Animator animator;
+public class CharacterObject : MonoBehaviour {
+    private Animator animator; 
     [SerializeField]
     float characterMovementSpeed = 10;
 
@@ -16,7 +14,7 @@ public class CharacterObject : MonoBehaviour
 
     [SerializeField]
     float characterHealthLimit = 100;
-
+    
     [SerializeField]
     float characterAttackDamage = 10;
 
@@ -28,10 +26,9 @@ public class CharacterObject : MonoBehaviour
     [SerializeField]
     Text charhealth;
     [SerializeField]
-    Text MoneyText;
+    Text moneytext;
     [SerializeField]
-    public float money = 0;
-
+    public float money=0;
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -44,7 +41,7 @@ public class CharacterObject : MonoBehaviour
 
     GeneralMovement generalMovementScript;
     Image characterTexture;
-    EnemyObject enemy;
+    
     List<GameObject> BulletList = new List<GameObject>();
 
     float InvincibilityTimer = 0;
@@ -56,9 +53,6 @@ public class CharacterObject : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //Ignore collision with Enemy Layer
-        Physics2D.IgnoreLayerCollision(0, 9);
-
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
@@ -67,15 +61,13 @@ public class CharacterObject : MonoBehaviour
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
-        if (characterHealth <= 0)
-            SceneManager.LoadScene("GameOver");
         animator.SetInteger("states", 1);
-        charhealth.text = "Health : " + characterHealth.ToString();
-        MoneyText.text = "Money : " + money.ToString();
+        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100";
+        moneytext.text = "Money : " + money.ToString();
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(screenPoint);
+        Vector3 mousePos= Camera.main.ScreenToWorldPoint(screenPoint);
         gameObject.transform.GetChild(0).transform.position = mousePos;
 
         //Character faces direction of crosshair
@@ -153,13 +145,13 @@ public class CharacterObject : MonoBehaviour
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
             animator.SetInteger("states", 0);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
         }
 
         //Update bullets shot by player
-        for (int i = 0; i < BulletList.Count; ++i)
+        for(int i = 0; i < BulletList.Count; ++i)
         {
             GameObject BulletObj = BulletList[i];
 
@@ -170,11 +162,11 @@ public class CharacterObject : MonoBehaviour
         }
 
         //Update Character States
-        if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
         {
             InvincibilityTimer += Time.deltaTime;
 
-            if (InvincibilityTimer >= InvincibilityTimeLimit)
+            if(InvincibilityTimer >= InvincibilityTimeLimit)
             {
                 InvincibilityTimer = 0;
                 characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
@@ -210,125 +202,102 @@ public class CharacterObject : MonoBehaviour
     }
 
     //Collision
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        //Projectile Layer
-        if (other.gameObject.layer == 8)
+        switch (collision.gameObject.tag)
         {
-            //Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-
-            if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
-            {
-                characterHealth -= 10;
-                if (characterHealth <= 0)
+            case "GenericBullet":
                 {
-                    Destroy(gameObject);
+                    if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+                    {
+                        collision.gameObject.SetActive(false);
+
+                        if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                        {
+                            characterHealth -= 10;
+                        }
+                    }
+
+                    goto default;
                 }
-            }
-        }
-        if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-        {
-            other.gameObject.SetActive(false);
+            case "InvincibilityPowerup":
+                {
+                    characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
+                    Destroy(collision.gameObject);
 
-            if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
-            {
-                characterHealth -= 10;
-            }
-        }
-    }
-}
+                    goto default;
+                }
+            case "HealthPowerup":
+                {
+                    if(characterHealth >= characterHealthLimit)
+                    {
+                        return;
+                    }
 
+                    characterHealth += 20;
 
-private void OnCollisionEnter2D(Collision2D collision)
-{
+                    if(characterHealth > characterHealthLimit)
+                    {
+                        characterHealth = characterHealthLimit;
+                    }
 
-    //Enemy layer
-    //else if (collision.gameObject.layer == 9)
-    //{
-    //}
+                    Destroy(collision.gameObject);
 
-    switch (collision.gameObject.tag)
-    {
-
-        case "InvincibilityPowerup":
-            {
-                characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
-                Destroy(collision.gameObject);
-
-                goto default;
-            }
-        case "HealthPowerup":
-            {
-                if (characterHealth >= characterHealthLimit)
+                    goto default;
+                }
+            default:
                 {
                     return;
                 }
-
-                characterHealth += 20;
-
-                if (characterHealth > characterHealthLimit)
-                {
-                    characterHealth = characterHealthLimit;
-                }
-
-                Destroy(collision.gameObject);
-
-                goto default;
-            }
-
-        default:
-            {
-                return;
-            }
+        }
     }
-}
 
-//Getters & Setters
-public void setPosition(Vector2 newPosition)
-{
-    transform.position = newPosition;
-}
+    //Getters & Setters
+    public void setPosition(Vector2 newPosition)
+    {
+        transform.position = newPosition;
+    }
 
-public Vector2 getPosition()
-{
-    return transform.position;
-}
+    public Vector2 getPosition()
+    {
+        return transform.position;
+    }
+    
+    public float GetCharacterMovementSpeed()
+    {
+        return characterMovementSpeed;
+    }
 
-public float GetCharacterMovementSpeed()
-{
-    return characterMovementSpeed;
-}
+    public void SetCharacterMovementSpeed(float newMovementSpeed)
+    {
+        characterMovementSpeed = newMovementSpeed;
+    }
+    
+    public float GetCharacterHealth()
+    {
+        return characterHealth;
+    }
+    public void DecreaseCharacterHealth(float reduceAmount)
+    {
+        characterHealth -= reduceAmount;
+    }
+    public void IncreaseCharacterHealth(float increaseAmount)
+    {
+        characterHealth += increaseAmount;
+    }
 
-public void SetCharacterMovementSpeed(float newMovementSpeed)
-{
-    characterMovementSpeed = newMovementSpeed;
-}
+    public void SetCharacterHealth(float newHealth)
+    {
+        characterHealth = newHealth;
+    }
+    
+    public float GetCharacterAttackDamage()
+    {
+        return characterAttackDamage;
+    }
 
-public float GetCharacterHealth()
-{
-    return characterHealth;
-}
-public void DecreaseCharacterHealth(float reduceAmount)
-{
-    characterHealth -= reduceAmount;
-}
-public void IncreaseCharacterHealth(float increaseAmount)
-{
-    characterHealth += increaseAmount;
-}
-
-public void SetCharacterHealth(float newHealth)
-{
-    characterHealth = newHealth;
-}
-
-public float GetCharacterAttackDamage()
-{
-    return characterAttackDamage;
-}
-
-public void SetCharacterAttackDamage(uint newAttackDamage)
-{
-    characterAttackDamage = newAttackDamage;
-}
+    public void SetCharacterAttackDamage(uint newAttackDamage)
+    {
+        characterAttackDamage = newAttackDamage;
+    }
 }
