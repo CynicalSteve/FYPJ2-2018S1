@@ -38,6 +38,10 @@ public class EnemyObject : MonoBehaviour {
 
     // Use this for initialization
     public void EnemyObjectInit() {
+
+        //Ignore collision with own Enemy layer
+        Physics2D.IgnoreLayerCollision(9, 9);
+
         //gameObject.SetActive(false);
         enemyState = STATE_ENEMY.STATE_IDLE;
 

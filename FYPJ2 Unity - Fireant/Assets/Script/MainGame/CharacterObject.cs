@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class CharacterObject : MonoBehaviour {
-    private Animator animator; 
+public class CharacterObject : MonoBehaviour
+{
+    private Animator animator;
     [SerializeField]
     float characterMovementSpeed = 10;
 
@@ -15,7 +16,7 @@ public class CharacterObject : MonoBehaviour {
 
     [SerializeField]
     float characterHealthLimit = 100;
-    
+
     [SerializeField]
     float characterAttackDamage = 10;
 
@@ -29,7 +30,8 @@ public class CharacterObject : MonoBehaviour {
     [SerializeField]
     Text MoneyText;
     [SerializeField]
-    public float money=0;
+    public float money = 0;
+
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -54,6 +56,9 @@ public class CharacterObject : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        //Ignore collision with Enemy Layer
+        Physics2D.IgnoreLayerCollision(0, 9);
+
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
@@ -70,7 +75,7 @@ public class CharacterObject : MonoBehaviour {
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
-        Vector3 mousePos= Camera.main.ScreenToWorldPoint(screenPoint);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(screenPoint);
         gameObject.transform.GetChild(0).transform.position = mousePos;
 
         //Character faces direction of crosshair
@@ -148,13 +153,13 @@ public class CharacterObject : MonoBehaviour {
             generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
             animator.SetInteger("states", 0);
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
         }
 
         //Update bullets shot by player
-        for(int i = 0; i < BulletList.Count; ++i)
+        for (int i = 0; i < BulletList.Count; ++i)
         {
             GameObject BulletObj = BulletList[i];
 
@@ -165,11 +170,11 @@ public class CharacterObject : MonoBehaviour {
         }
 
         //Update Character States
-        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
         {
             InvincibilityTimer += Time.deltaTime;
 
-            if(InvincibilityTimer >= InvincibilityTimeLimit)
+            if (InvincibilityTimer >= InvincibilityTimeLimit)
             {
                 InvincibilityTimer = 0;
                 characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
@@ -205,106 +210,125 @@ public class CharacterObject : MonoBehaviour {
     }
 
     //Collision
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        switch (collision.gameObject.tag)
+        //Projectile Layer
+        if (other.gameObject.layer == 8)
         {
-            case "GenericBullet":
+            //Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+
+            if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+            {
+                characterHealth -= 10;
+                if (characterHealth <= 0)
                 {
-                    if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-                    {
-                        collision.gameObject.SetActive(false);
-
-                        if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
-                        {
-                            characterHealth -= 10;
-                            if(characterHealth<=0)
-                            {
-                                Destroy(gameObject);
-                            }
-                        }
-                    }
-
-                    goto default;
+                    Destroy(gameObject);
                 }
-            case "InvincibilityPowerup":
-                {
-                    characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
-                    Destroy(collision.gameObject);
+            }
+        }
+        if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+        {
+            other.gameObject.SetActive(false);
 
-                    goto default;
-                }
-            case "HealthPowerup":
-                {
-                    if(characterHealth >= characterHealthLimit)
-                    {
-                        return;
-                    }
+            if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+            {
+                characterHealth -= 10;
+            }
+        }
+    }
+}
 
-                    characterHealth += 20;
 
-                    if(characterHealth > characterHealthLimit)
-                    {
-                        characterHealth = characterHealthLimit;
-                    }
+private void OnCollisionEnter2D(Collision2D collision)
+{
 
-                    Destroy(collision.gameObject);
+    //Enemy layer
+    //else if (collision.gameObject.layer == 9)
+    //{
+    //}
 
-                    goto default;
-                }
-            default:
+    switch (collision.gameObject.tag)
+    {
+
+        case "InvincibilityPowerup":
+            {
+                characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
+                Destroy(collision.gameObject);
+
+                goto default;
+            }
+        case "HealthPowerup":
+            {
+                if (characterHealth >= characterHealthLimit)
                 {
                     return;
                 }
-        }
-    }
 
-    //Getters & Setters
-    public void setPosition(Vector2 newPosition)
-    {
-        transform.position = newPosition;
-    }
+                characterHealth += 20;
 
-    public Vector2 getPosition()
-    {
-        return transform.position;
-    }
-    
-    public float GetCharacterMovementSpeed()
-    {
-        return characterMovementSpeed;
-    }
+                if (characterHealth > characterHealthLimit)
+                {
+                    characterHealth = characterHealthLimit;
+                }
 
-    public void SetCharacterMovementSpeed(float newMovementSpeed)
-    {
-        characterMovementSpeed = newMovementSpeed;
-    }
-    
-    public float GetCharacterHealth()
-    {
-        return characterHealth;
-    }
-    public void DecreaseCharacterHealth(float reduceAmount)
-    {
-        characterHealth -= reduceAmount;
-    }
-    public void IncreaseCharacterHealth(float increaseAmount)
-    {
-        characterHealth += increaseAmount;
-    }
+                Destroy(collision.gameObject);
 
-    public void SetCharacterHealth(float newHealth)
-    {
-        characterHealth = newHealth;
-    }
-    
-    public float GetCharacterAttackDamage()
-    {
-        return characterAttackDamage;
-    }
+                goto default;
+            }
 
-    public void SetCharacterAttackDamage(uint newAttackDamage)
-    {
-        characterAttackDamage = newAttackDamage;
+        default:
+            {
+                return;
+            }
     }
+}
+
+//Getters & Setters
+public void setPosition(Vector2 newPosition)
+{
+    transform.position = newPosition;
+}
+
+public Vector2 getPosition()
+{
+    return transform.position;
+}
+
+public float GetCharacterMovementSpeed()
+{
+    return characterMovementSpeed;
+}
+
+public void SetCharacterMovementSpeed(float newMovementSpeed)
+{
+    characterMovementSpeed = newMovementSpeed;
+}
+
+public float GetCharacterHealth()
+{
+    return characterHealth;
+}
+public void DecreaseCharacterHealth(float reduceAmount)
+{
+    characterHealth -= reduceAmount;
+}
+public void IncreaseCharacterHealth(float increaseAmount)
+{
+    characterHealth += increaseAmount;
+}
+
+public void SetCharacterHealth(float newHealth)
+{
+    characterHealth = newHealth;
+}
+
+public float GetCharacterAttackDamage()
+{
+    return characterAttackDamage;
+}
+
+public void SetCharacterAttackDamage(uint newAttackDamage)
+{
+    characterAttackDamage = newAttackDamage;
+}
 }
