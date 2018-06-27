@@ -15,7 +15,7 @@ public class EnemyObject : MonoBehaviour {
     float MovementSpeed = 10;
     [SerializeField]
     float secondsBetweenShots = 1;
-
+    [SerializeField]
     float fireRateTimer = 0;
     bool canShoot = true;
 
@@ -149,6 +149,7 @@ public class EnemyObject : MonoBehaviour {
 
                 if(Health <= 0)
                 {
+                    theCharacter.money += 20;
                     Destroy(gameObject);
                 }
             }

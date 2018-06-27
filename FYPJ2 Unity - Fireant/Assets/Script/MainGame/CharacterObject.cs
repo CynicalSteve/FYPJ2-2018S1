@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CharacterObject : MonoBehaviour {
     private Animator animator; 
@@ -25,6 +26,10 @@ public class CharacterObject : MonoBehaviour {
     float InvincibilityTimeLimit = 5;
     [SerializeField]
     Text charhealth;
+    [SerializeField]
+    Text MoneyText;
+    [SerializeField]
+    public float money=0;
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -37,7 +42,7 @@ public class CharacterObject : MonoBehaviour {
 
     GeneralMovement generalMovementScript;
     Image characterTexture;
-    
+    EnemyObject enemy;
     List<GameObject> BulletList = new List<GameObject>();
 
     float InvincibilityTimer = 0;
@@ -57,8 +62,11 @@ public class CharacterObject : MonoBehaviour {
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
+        if (characterHealth <= 0)
+            SceneManager.LoadScene("GameOver");
         animator.SetInteger("states", 1);
-        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100"; 
+        charhealth.text = "Health : " + characterHealth.ToString();
+        MoneyText.text = "Money : " + money.ToString();
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
@@ -210,6 +218,10 @@ public class CharacterObject : MonoBehaviour {
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
                             characterHealth -= 10;
+                            if(characterHealth<=0)
+                            {
+                                Destroy(gameObject);
+                            }
                         }
                     }
 
