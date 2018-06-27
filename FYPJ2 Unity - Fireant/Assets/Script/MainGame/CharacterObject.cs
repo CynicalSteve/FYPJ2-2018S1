@@ -25,6 +25,7 @@ public class CharacterObject : MonoBehaviour {
     float InvincibilityTimeLimit = 5;
     [SerializeField]
     Text charhealth;
+
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -49,6 +50,9 @@ public class CharacterObject : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        //Ignore collision with Enemy Layer
+        Physics2D.IgnoreLayerCollision(0, 9);
+
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
@@ -197,24 +201,37 @@ public class CharacterObject : MonoBehaviour {
     }
 
     //Collision
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //Projectile Layer
+        if (other.gameObject.layer == 8)
+        {
+            //Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+
+            if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+            {
+                other.gameObject.SetActive(false);
+
+                if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                {
+                    characterHealth -= 10;
+                }
+            }
+        }
+    }
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+       
+        //Enemy layer
+        //else if (collision.gameObject.layer == 9)
+        //{
+        //}
+
         switch (collision.gameObject.tag)
         {
-            case "GenericBullet":
-                {
-                    if (collision.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-                    {
-                        collision.gameObject.SetActive(false);
-
-                        if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
-                        {
-                            characterHealth -= 10;
-                        }
-                    }
-
-                    goto default;
-                }
+           
             case "InvincibilityPowerup":
                 {
                     characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
@@ -240,6 +257,7 @@ public class CharacterObject : MonoBehaviour {
 
                     goto default;
                 }
+            
             default:
                 {
                     return;
