@@ -12,11 +12,13 @@ public class EnemyObject : MonoBehaviour {
     [SerializeField]
     float Health = 100;
     [SerializeField]
+    float MaximumHealth = 100;
+    [SerializeField]
     float MovementSpeed = 10;
     [SerializeField]
     float secondsBetweenShots = 1;
     [SerializeField]
-    float fireRateTimer = 0;
+    float fireRateTimer;
     bool canShoot = true;
 
     STATE_ENEMY enemyState;
@@ -24,8 +26,6 @@ public class EnemyObject : MonoBehaviour {
     CharacterObject theCharacter;
     GeneralMovement generalMovementScript;
     Image enemyTexture;
-    bool falling = true;
-
 
     enum STATE_ENEMY
     {
@@ -50,6 +50,12 @@ public class EnemyObject : MonoBehaviour {
         enemyTexture = GetComponent<Image>();
 
         gameObject.transform.Translate(0, theCharacter.transform.position.y, 0);
+
+        fireRateTimer = Random.Range(0, secondsBetweenShots);
+     
+        Vector3 a = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+        GameObject HealthBar = Instantiate(Resources.Load("HealthBar"), a, transform.rotation, gameObject.transform.parent.transform) as GameObject;
+        //gameObject.GetComponent<RectTransform>().sizeDelta.Set(50, 5);
     }
 	
 	public void EnemyObjectUpdate() {
@@ -150,14 +156,14 @@ public class EnemyObject : MonoBehaviour {
                 {
                     other.gameObject.SetActive(false);
                     Health -= 10;
-
+                    
                     if (Health <= 0)
                     {
                         Destroy(gameObject);
+                       
                     }
 
                     theCharacter.money += 20;
-                    Destroy(gameObject);
                 }
             }
         }
@@ -165,12 +171,6 @@ public class EnemyObject : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
-
-        if((collision.gameObject.name == "ground"))
-        {
-            falling = false;
-        }
     }
 
     //Getters & setters

@@ -5,7 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterObject : MonoBehaviour {
-    private Animator animator; 
+    private Animator animator;
+
+    [SerializeField]
+    Canvas theCanvas;
+
     [SerializeField]
     float characterMovementSpeed = 10;
 
@@ -28,7 +32,8 @@ public class CharacterObject : MonoBehaviour {
     [SerializeField]
     Text moneytext;
     [SerializeField]
-    public float money=0;
+    public float money= 0;
+
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -46,13 +51,16 @@ public class CharacterObject : MonoBehaviour {
 
     float InvincibilityTimer = 0;
     float fireRateTimer = 0;
-    bool canShoot = true;
+    bool canShoot = true, canJump = true;
 
     bool facingLeft = false;
 
     // Use this for initialization
     void Start()
     {
+        //Ignore collision with own Enemy layer
+        Physics2D.IgnoreLayerCollision(0, 9);
+
         animator = this.GetComponent<Animator>();
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
@@ -141,13 +149,35 @@ public class CharacterObject : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.D))
         {
-            //transform.position -= transform.up * characterMovementSpeed * Time.deltaTime;
-            generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
+            //If character is out of left dead zone
+            if (gameObject.transform.position.x >= theCanvas.transform.position.x)
+            {
+                //Move all other objects in the scene
+                for(int i = 0; i < theCanvas.transform.childCount; ++i)
+                {
+                    GameObject theGameObject = theCanvas.transform.GetChild(i).gameObject;
+
+                    //If the gameobject is UI layer or the character object
+                    if(theGameObject.layer == 5 || theGameObject.tag == "MainCharacter")
+                    {
+                        continue;
+                    }
+
+                    generalMovementScript.moveLeft(theGameObject, characterMovementSpeed);
+                }
+
+            }
+            else
+            {
+                generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
+            }
+
             animator.SetInteger("states", 0);
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
+            canJump = false;
         }
 
         //Update bullets shot by player
@@ -246,6 +276,11 @@ public class CharacterObject : MonoBehaviour {
 
                     Destroy(collision.gameObject);
 
+                    goto default;
+                }
+            case "Ground":
+                {
+                    canJump = true;
                     goto default;
                 }
             default:

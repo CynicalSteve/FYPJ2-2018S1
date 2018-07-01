@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour {
     // Use this for initialization
     public void EnemyManagerInit() {
 
-        for (short i = 0; i < 5; ++i)
+        for (short i = 0; i < 1; ++i)
         {
             Vector2 spawnPosition = new Vector2(Random.Range(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).y, Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y), 0);
 
