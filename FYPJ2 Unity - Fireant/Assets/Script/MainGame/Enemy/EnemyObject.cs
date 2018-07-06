@@ -19,6 +19,10 @@ public class EnemyObject : MonoBehaviour {
     float secondsBetweenShots = 1;
     [SerializeField]
     float fireRateTimer;
+
+    [SerializeField]
+    Image HealthBar;
+
     bool canShoot = true;
 
     STATE_ENEMY enemyState;
@@ -54,8 +58,7 @@ public class EnemyObject : MonoBehaviour {
         fireRateTimer = Random.Range(0, secondsBetweenShots);
      
         Vector3 a = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
-        GameObject HealthBar = Instantiate(Resources.Load("HealthBar"), a, transform.rotation, gameObject.transform.parent.transform) as GameObject;
-        //gameObject.GetComponent<RectTransform>().sizeDelta.Set(50, 5);
+        
     }
 	
 	public void EnemyObjectUpdate() {
@@ -155,14 +158,10 @@ public class EnemyObject : MonoBehaviour {
                 if (!other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                 {
                     other.gameObject.SetActive(false);
-                    Health -= 10;
-                    
-                    if (Health <= 0)
-                    {
-                        Destroy(gameObject);
-                       
-                    }
+                    DecreaseHealth(10);
 
+
+                    
                     theCharacter.money += 20;
                 }
             }
@@ -185,9 +184,22 @@ public class EnemyObject : MonoBehaviour {
     public void DecreaseHealth(float reduceAmount)
     {
         Health -= reduceAmount;
+        
+        //Update Health Bar Appearance
+        HealthBar.fillAmount = Health / MaximumHealth;
+
+        if (Health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
     public void IncreaseHealth(float increaseAmount)
     {
         Health += increaseAmount;
+
+        if(Health > MaximumHealth)
+        {
+            Health = MaximumHealth;
+        }
     }
 }
