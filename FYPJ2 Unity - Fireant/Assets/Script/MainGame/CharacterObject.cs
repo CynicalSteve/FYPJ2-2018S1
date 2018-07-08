@@ -246,6 +246,20 @@ public class CharacterObject : MonoBehaviour {
                 }
             }
         }
+        if (other.gameObject.tag == "Ground")
+        {
+            if (Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>()))
+            {
+                Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>(), false);
+            }
+        }
+        if(other.gameObject.name == "IgnoreCollisionTrigger")
+        {
+            if (!Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>()))
+            {
+                Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>());
+            }
+        }
     }
     
     
