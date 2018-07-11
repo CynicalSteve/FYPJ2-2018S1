@@ -74,7 +74,6 @@ public class CharacterObject : MonoBehaviour
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
-        moretest += Time.deltaTime;
         animator.SetInteger("states", 1);
         charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
         moneytext.text = "Money : " + money.ToString();
@@ -83,7 +82,7 @@ public class CharacterObject : MonoBehaviour
         Debug.Log("THE CHARACTER POSITION"+transform.position);
         if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
         {
-            transform.position = respawnpoint;
+            transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"),PlayerPrefs.GetFloat("respawnhere1"),0);
         }
 
         //Crosshair snap to mouse position
@@ -288,6 +287,8 @@ public class CharacterObject : MonoBehaviour
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
                             characterHealth -= 10;
+                            if(characterHealth<=0)
+                                SceneManager.LoadScene("GameOver");
                         }
                     }
 
@@ -344,6 +345,8 @@ public class CharacterObject : MonoBehaviour
             Destroy(other.gameObject);
             lol++;
             PlayerPrefs.SetFloat("savecheckpoint", lol);
+            PlayerPrefs.SetFloat("respawnhere", respawnpoint.x);
+            PlayerPrefs.SetFloat("respawnhere1", respawnpoint.y);
         }
     }
 
