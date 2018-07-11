@@ -89,6 +89,35 @@ public class CharacterObject : MonoBehaviour {
             gameObject.transform.right = -gameObject.transform.right;
             facingLeft = false;
         }
+
+        KeyInputs();
+
+        //Update bullets shot by player
+        for(int i = 0; i < BulletList.Count; ++i)
+        {
+            GameObject BulletObj = BulletList[i];
+
+            if (BulletObj.activeInHierarchy)
+            {
+                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+            }
+        }
+
+        //Update Character States
+        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        {
+            InvincibilityTimer += Time.deltaTime;
+
+            if(InvincibilityTimer >= InvincibilityTimeLimit)
+            {
+                InvincibilityTimer = 0;
+                characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
+            }
+        }
+    }
+
+    private void KeyInputs()
+    {
         //Shoot Pistol
         if (Input.GetMouseButtonDown(0))
         {
@@ -133,19 +162,20 @@ public class CharacterObject : MonoBehaviour {
         //}
         if (Input.GetKey(KeyCode.W))
         {
-            //transform.position += transform.up * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveUp(characterTexture, characterMovementSpeed);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            //transform.position += transform.right * characterMovementSpeed * Time.deltaTime;
             generalMovementScript.moveDown(characterTexture, characterMovementSpeed);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            //transform.position -= transform.right * characterMovementSpeed * Time.deltaTime;
-            generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
-            animator.SetInteger("states", 0);
+            if (gameObject.GetComponent<RectTransform>().localPosition.x > theCanvas.transform.position.x - (theCanvas.GetComponent<RectTransform>().rect.width * 0.5f))
+            {
+                
+                generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
+                animator.SetInteger("states", 0);
+            }
         }
         if (Input.GetKey(KeyCode.D))
         {
@@ -153,12 +183,12 @@ public class CharacterObject : MonoBehaviour {
             if (gameObject.transform.position.x >= theCanvas.transform.position.x)
             {
                 //Move all other objects in the scene
-                for(int i = 0; i < theCanvas.transform.childCount; ++i)
+                for (int i = 0; i < theCanvas.transform.childCount; ++i)
                 {
                     GameObject theGameObject = theCanvas.transform.GetChild(i).gameObject;
 
                     //If the gameobject is UI layer or the character object
-                    if(theGameObject.layer == 5 || theGameObject.tag == "MainCharacter")
+                    if (theGameObject.layer == 5 || theGameObject.tag == "MainCharacter")
                     {
                         continue;
                     }
@@ -167,40 +197,17 @@ public class CharacterObject : MonoBehaviour {
                 }
 
             }
-            else
+            else //Move the character
             {
                 generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
             }
 
             animator.SetInteger("states", 0);
         }
-        if(Input.GetKeyDown(KeyCode.Space) && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
             canJump = false;
-        }
-
-        //Update bullets shot by player
-        for(int i = 0; i < BulletList.Count; ++i)
-        {
-            GameObject BulletObj = BulletList[i];
-
-            if (BulletObj.activeInHierarchy)
-            {
-                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
-            }
-        }
-
-        //Update Character States
-        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
-        {
-            InvincibilityTimer += Time.deltaTime;
-
-            if(InvincibilityTimer >= InvincibilityTimeLimit)
-            {
-                InvincibilityTimer = 0;
-                characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
-            }
         }
     }
 
@@ -234,26 +241,61 @@ public class CharacterObject : MonoBehaviour {
     //Collision
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "GenericBullet")
+        switch(other.gameObject.tag)
         {
-            if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
-            {
-                other.gameObject.SetActive(false);
-
-                if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+            case "GenericBullet":
                 {
-                    characterHealth -= 10;
+                    if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
+                    {
+                        other.gameObject.SetActive(false);
+
+                        if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
+                        {
+                            characterHealth -= 10;
+                        }
+                    }
+
+                    goto default;
                 }
-            }
+            case "Ground":
+                {
+                    if (Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>()))
+                    {
+                        Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>(), false);
+                    }
+
+                    goto default;
+                }
+            case "InvincibilityPowerup":
+                {
+                    characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
+                    Destroy(other.gameObject);
+
+                    goto default;
+                }
+            case "HealthPowerup":
+                {
+                    if (characterHealth >= characterHealthLimit)
+                    {
+                        return;
+                    }
+
+                    characterHealth += 20;
+
+                    if (characterHealth > characterHealthLimit)
+                    {
+                        characterHealth = characterHealthLimit;
+                    }
+
+                    Destroy(other.gameObject);
+
+                    goto default;
+                }
+            default:
+                break;
         }
-        if (other.gameObject.tag == "Ground")
-        {
-            if (Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>()))
-            {
-                Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>(), false);
-            }
-        }
-        if(other.gameObject.name == "IgnoreCollisionTrigger")
+
+         if(other.gameObject.name == "IgnoreCollisionTrigger")
         {
             if (!Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>()))
             {
