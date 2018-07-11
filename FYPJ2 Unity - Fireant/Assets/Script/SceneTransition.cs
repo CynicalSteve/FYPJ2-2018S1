@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-
-public class SceneTransition : MonoBehaviour {
-    
+public class SceneTransition : MonoBehaviour
+{
+    int lol1 = 0;
     public void ToGame()
     {
-        SceneManager.LoadScene("Main Scene");
+        if (PlayerPrefs.GetFloat("savecheckpoint") >= 1)
+        {
+            SceneManager.LoadScene("YongHan Scene");
+            lol1++;
+            PlayerPrefs.SetFloat("respawntocheckpoint", lol1);
+        }
+        else
+            SceneManager.LoadScene("YongHan Scene");
     }
 }

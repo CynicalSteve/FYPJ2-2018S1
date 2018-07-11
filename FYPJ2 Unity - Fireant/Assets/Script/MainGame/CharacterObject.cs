@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class CharacterObject : MonoBehaviour {
+using UnityEngine.SceneManagement;
+public class CharacterObject : MonoBehaviour
+{
     private Animator animator;
 
     [SerializeField]
@@ -18,7 +19,7 @@ public class CharacterObject : MonoBehaviour {
 
     [SerializeField]
     float characterHealthLimit = 100;
-    
+
     [SerializeField]
     float characterAttackDamage = 10;
 
@@ -32,8 +33,9 @@ public class CharacterObject : MonoBehaviour {
     [SerializeField]
     Text moneytext;
     [SerializeField]
-    public float money= 0;
-
+    public float money = 0;
+    public int lol = 0;
+    public Vector3 respawnpoint;
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -46,15 +48,18 @@ public class CharacterObject : MonoBehaviour {
 
     GeneralMovement generalMovementScript;
     Image characterTexture;
-    
+    SceneTransition test;
+
     List<GameObject> BulletList = new List<GameObject>();
 
     float InvincibilityTimer = 0;
     float fireRateTimer = 0;
     bool canShoot = true, canJump = true;
 
-    bool facingLeft = false;
+    public float lol1 = 0;
 
+    bool facingLeft = false;
+    double moretest;
     // Use this for initialization
     void Start()
     {
@@ -69,15 +74,23 @@ public class CharacterObject : MonoBehaviour {
     // Update is called once per frame
     public void MainCharacterUpdate()
     {
+        moretest += Time.deltaTime;
         animator.SetInteger("states", 1);
-        charhealth.text = "Health : " + characterHealth.ToString() +"/"  + "100";
+        charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
         moneytext.text = "Money : " + money.ToString();
+        Debug.Log("THIS IS THE THINGY "+PlayerPrefs.GetFloat("respawntocheckpoint"));
+        Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN "+respawnpoint);
+        Debug.Log("THE CHARACTER POSITION"+transform.position);
+        if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
+        {
+            transform.position = respawnpoint;
+        }
+
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
         screenPoint.z = 10.0f; //distance of the plane from the camera
-        Vector3 mousePos= Camera.main.ScreenToWorldPoint(screenPoint);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(screenPoint);
         gameObject.transform.GetChild(0).transform.position = mousePos;
-
         //Character faces direction of crosshair
         if (mousePos.x < gameObject.transform.position.x && !facingLeft)
         {
@@ -153,12 +166,12 @@ public class CharacterObject : MonoBehaviour {
             if (gameObject.transform.position.x >= theCanvas.transform.position.x)
             {
                 //Move all other objects in the scene
-                for(int i = 0; i < theCanvas.transform.childCount; ++i)
+                for (int i = 0; i < theCanvas.transform.childCount; ++i)
                 {
                     GameObject theGameObject = theCanvas.transform.GetChild(i).gameObject;
 
                     //If the gameobject is UI layer or the character object
-                    if(theGameObject.layer == 5 || theGameObject.tag == "MainCharacter")
+                    if (theGameObject.layer == 5 || theGameObject.tag == "MainCharacter")
                     {
                         continue;
                     }
@@ -174,14 +187,14 @@ public class CharacterObject : MonoBehaviour {
 
             animator.SetInteger("states", 0);
         }
-        if(Input.GetKeyDown(KeyCode.Space) && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * 400);
             canJump = false;
         }
 
         //Update bullets shot by player
-        for(int i = 0; i < BulletList.Count; ++i)
+        for (int i = 0; i < BulletList.Count; ++i)
         {
             GameObject BulletObj = BulletList[i];
 
@@ -192,11 +205,11 @@ public class CharacterObject : MonoBehaviour {
         }
 
         //Update Character States
-        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
         {
             InvincibilityTimer += Time.deltaTime;
 
-            if(InvincibilityTimer >= InvincibilityTimeLimit)
+            if (InvincibilityTimer >= InvincibilityTimeLimit)
             {
                 InvincibilityTimer = 0;
                 characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
@@ -243,6 +256,10 @@ public class CharacterObject : MonoBehaviour {
                 if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                 {
                     characterHealth -= 10;
+                    if (characterHealth <= 0)
+                    {
+                        SceneManager.LoadScene("GameOver");
+                    }
                 }
             }
         }
@@ -253,16 +270,23 @@ public class CharacterObject : MonoBehaviour {
                 Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.GetComponent<Collider2D>(), false);
             }
         }
-        if(other.gameObject.name == "IgnoreCollisionTrigger")
+        if (other.gameObject.name == "IgnoreCollisionTrigger")
         {
             if (!Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>()))
             {
                 Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>());
             }
         }
+        if (other.gameObject.tag == "Checkpoint")
+        {
+            respawnpoint = other.transform.position;
+            Destroy(other.gameObject);
+            lol++;
+            PlayerPrefs.SetFloat("savecheckpoint", lol);
+        }
     }
-    
-    
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         switch (collision.gameObject.tag)
@@ -276,14 +300,14 @@ public class CharacterObject : MonoBehaviour {
                 }
             case "HealthPowerup":
                 {
-                    if(characterHealth >= characterHealthLimit)
+                    if (characterHealth >= characterHealthLimit)
                     {
                         return;
                     }
 
                     characterHealth += 20;
 
-                    if(characterHealth > characterHealthLimit)
+                    if (characterHealth > characterHealthLimit)
                     {
                         characterHealth = characterHealthLimit;
                     }
@@ -314,7 +338,7 @@ public class CharacterObject : MonoBehaviour {
     {
         return transform.position;
     }
-    
+
     public float GetCharacterMovementSpeed()
     {
         return characterMovementSpeed;
@@ -324,7 +348,7 @@ public class CharacterObject : MonoBehaviour {
     {
         characterMovementSpeed = newMovementSpeed;
     }
-    
+
     public float GetCharacterHealth()
     {
         return characterHealth;
@@ -342,7 +366,7 @@ public class CharacterObject : MonoBehaviour {
     {
         characterHealth = newHealth;
     }
-    
+
     public float GetCharacterAttackDamage()
     {
         return characterAttackDamage;

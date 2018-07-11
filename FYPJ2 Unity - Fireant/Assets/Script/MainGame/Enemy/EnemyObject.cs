@@ -159,10 +159,6 @@ public class EnemyObject : MonoBehaviour {
                 {
                     other.gameObject.SetActive(false);
                     DecreaseHealth(10);
-
-
-                    
-                    theCharacter.money += 20;
                 }
             }
         }
@@ -191,6 +187,7 @@ public class EnemyObject : MonoBehaviour {
         if (Health <= 0)
         {
             Destroy(gameObject);
+            theCharacter.money += 20;
         }
     }
     public void IncreaseHealth(float increaseAmount)
