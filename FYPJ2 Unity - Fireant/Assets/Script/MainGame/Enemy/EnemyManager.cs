@@ -46,7 +46,13 @@ public class EnemyManager : MonoBehaviour {
         //Update bullets shot by enemy
         foreach (GameObject BulletObj in BulletList)
         {
-            if (BulletObj.activeInHierarchy)
+            if(!BulletObj)
+            {
+                BulletList.Remove(BulletObj);
+                continue;
+            }
+
+            if (BulletObj.activeSelf)
             {
                 BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
             }

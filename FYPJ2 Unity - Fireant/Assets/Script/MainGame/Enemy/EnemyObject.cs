@@ -123,6 +123,7 @@ public class EnemyObject : MonoBehaviour {
 
     void Shoot()
     {
+        
         //Create a bullet and add it as child to Scene control and object List
         GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
 
@@ -140,7 +141,7 @@ public class EnemyObject : MonoBehaviour {
         normalizedDir.z = 0;
         BulletObj.transform.up = normalizedDir;
 
-        //Set the bullet's destination to cursor
+        //Set the bullet's destination to player
         BulletObj.GetComponent<BulletObject>().SetDestination(theCharacter.transform.position);
 
         //Add bullet obj to list
@@ -157,7 +158,7 @@ public class EnemyObject : MonoBehaviour {
             {
                 if (!other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                 {
-                    other.gameObject.SetActive(false);
+                    Destroy(other.gameObject);
                     DecreaseHealth(10);
                 }
             }
