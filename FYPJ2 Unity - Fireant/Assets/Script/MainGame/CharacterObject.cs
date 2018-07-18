@@ -22,10 +22,7 @@ public class CharacterObject : MonoBehaviour
 
     [SerializeField]
     float characterAttackDamage = 10;
-
-    [SerializeField]
-    float secondsBetweenShots = 1.0f;
-
+    
     [SerializeField]
     float InvincibilityTimeLimit = 5;
     [SerializeField]
@@ -33,9 +30,11 @@ public class CharacterObject : MonoBehaviour
     [SerializeField]
     Text moneytext;
     [SerializeField]
+
     public float money = 0;
     public int lol = 0;
     public Vector3 respawnpoint;
+
     public enum CHARACTER_STATE
     {
         CHARACTERSTATE_NORMAL,
@@ -51,6 +50,8 @@ public class CharacterObject : MonoBehaviour
     SceneTransition test;
 
     List<GameObject> BulletList = new List<GameObject>();
+    private List<WeaponBase> WeaponsEquipped = new List<WeaponBase>();
+    private int CurrentWeapon = 0;
 
     float InvincibilityTimer = 0;
     float fireRateTimer = 0;
@@ -70,6 +71,11 @@ public class CharacterObject : MonoBehaviour
         generalMovementScript = GameObject.FindGameObjectWithTag("GeneralScripts").GetComponent<GeneralMovement>();
         characterTexture = GetComponent<Image>();
         gameObject.transform.GetChild(0).GetComponent<Image>();
+
+        WeaponsEquipped.Add(new Pistol());
+        WeaponsEquipped.Add(new Rifle());
+
+        gameObject.transform.Find("PlayerWeapon").localPosition = gameObject.transform.position;
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
@@ -77,9 +83,9 @@ public class CharacterObject : MonoBehaviour
         animator.SetInteger("states", 1);
         charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
         moneytext.text = "Money : " + money.ToString();
-        Debug.Log("THIS IS THE THINGY "+PlayerPrefs.GetFloat("respawntocheckpoint"));
-        Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN "+respawnpoint);
-        Debug.Log("THE CHARACTER POSITION"+transform.position);
+        //Debug.Log("THIS IS THE THINGY "+PlayerPrefs.GetFloat("respawntocheckpoint"));
+        //Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN "+respawnpoint);
+        //Debug.Log("THE CHARACTER POSITION"+transform.position);
         if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
         {
             transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"),PlayerPrefs.GetFloat("respawnhere1"),0);
@@ -102,6 +108,11 @@ public class CharacterObject : MonoBehaviour
             facingLeft = false;
         }
 
+        //Weapon Rot
+        Vector3 normalizedDir = (mousePos - gameObject.transform.position).normalized;
+        normalizedDir.z = 0;
+        gameObject.transform.Find("PlayerWeapon").transform.up = normalizedDir;
+        
         KeyInputs();
 
         //Update bullets shot by player
@@ -134,8 +145,8 @@ public class CharacterObject : MonoBehaviour
 
     private void KeyInputs()
     {
-        //Shoot Pistol
-        if (Input.GetMouseButtonDown(0))
+        //Shoot
+        if (Input.GetMouseButton(0))
         {
             if (canShoot)
             {
@@ -148,35 +159,44 @@ public class CharacterObject : MonoBehaviour
             {
                 fireRateTimer += Time.deltaTime;
 
-                if (fireRateTimer >= secondsBetweenShots)
+                if (fireRateTimer >= WeaponsEquipped[CurrentWeapon].SecondsBetweenShots)
                 {
                     canShoot = true;
                     fireRateTimer = 0;
                 }
             }
         }
-        //Shoot Machine Gun
-        //if (Input.GetMouseButton(0))
-        //{
-        //    if (canShoot)
-        //    {
-        //        Shoot();
-        //        canShoot = false;
-        //    }
-        //}
-        //{
-        //    if (!canShoot)
-        //    {
-        //        fireRateTimer += Time.deltaTime;
 
-        //        if (fireRateTimer >= secondsBetweenShots)
-        //        {
-        //            canShoot = true;
-        //            fireRateTimer = 0;
-        //        }
-        //    }
-        //}
-        if (Input.GetKey(KeyCode.W))
+        //Switching weapons
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) //forward
+        {
+            if (CurrentWeapon + 1 == WeaponsEquipped.Count)
+            {
+                //Wrap around
+                CurrentWeapon = 0;
+            }
+            else
+            {
+                ++CurrentWeapon;
+            }
+
+            gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) //backwards
+        {
+            if (CurrentWeapon == 0)
+            {
+                //Wrap around
+                CurrentWeapon = WeaponsEquipped.Count - 1;
+            }
+            else
+            {
+                --CurrentWeapon;
+            }
+        }
+        
+        //Movement
+            if (Input.GetKey(KeyCode.W))
         {
             generalMovementScript.moveUp(characterTexture, characterMovementSpeed);
         }
