@@ -9,11 +9,15 @@ public class SceneTransition : MonoBehaviour
     {
         if (PlayerPrefs.GetFloat("savecheckpoint") >= 1)
         {
-            SceneManager.LoadScene("YongHan Scene");
             lol1++;
             PlayerPrefs.SetFloat("respawntocheckpoint", lol1);
+            SceneManager.LoadScene("Main Scene");
         }
         else
-            SceneManager.LoadScene("YongHan Scene");
+            SceneManager.LoadScene("Main Scene");
+    }
+    public void ToAbout()
+    {
+        SceneManager.LoadScene("about");
     }
 }

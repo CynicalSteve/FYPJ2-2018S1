@@ -56,7 +56,7 @@ public class CharacterObject : MonoBehaviour
     float InvincibilityTimer = 0;
     float fireRateTimer = 0;
     bool canShoot = true, canJump = true;
-
+    //lol1 is to pass the boolean to the scenetransition script to let it know whether it has touched the checkpoint
     public float lol1 = 0;
 
     bool facingLeft = false;
