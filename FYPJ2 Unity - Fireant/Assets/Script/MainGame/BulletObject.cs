@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletObject : MonoBehaviour
 {
     [SerializeField]
-    const float BulletMovementSpeed = 50;
+    const float BulletMovementSpeed = 10;
 
     GeneralMovement generalMovementScript;
     EnemyManager enemyManager;
@@ -28,7 +28,7 @@ public class BulletObject : MonoBehaviour
     {
         if (generalMovementScript.moveTo(gameObject, BulletMovementSpeed, Destination))
         {
-            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
     }
 

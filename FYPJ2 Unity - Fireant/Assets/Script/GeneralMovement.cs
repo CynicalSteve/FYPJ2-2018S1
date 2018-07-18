@@ -42,6 +42,16 @@ public class GeneralMovement : MonoBehaviour {
 
         theImage.transform.position = vectorPos;
         return false;
+
+        //Vector3 dirNorm = (Destination - theImage.transform.position).normalized;
+
+        //if(Vector3.Distance(theImage.transform.position, Destination) <= 1)
+        //{
+        //    return true;
+        //}
+
+        //theImage.transform.position += dirNorm * movementSpeed * Time.deltaTime;
+        //return false;
     }
 
     public bool moveToXPos(Image theImage, float movementSpeed, Vector3 Destination)

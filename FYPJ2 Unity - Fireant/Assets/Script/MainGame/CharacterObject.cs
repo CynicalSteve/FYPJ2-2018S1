@@ -105,18 +105,22 @@ public class CharacterObject : MonoBehaviour
         KeyInputs();
 
         //Update bullets shot by player
-        for(int i = 0; i < BulletList.Count; ++i)
+        foreach (GameObject BulletObj in BulletList)
         {
-            GameObject BulletObj = BulletList[i];
+            if (!BulletObj)
+            {
+                BulletList.Remove(BulletObj);
+                continue;
+            }
 
-            if (BulletObj.activeInHierarchy)
+            if (BulletObj.activeSelf)
             {
                 BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
             }
         }
 
         //Update Character States
-        if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+        if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
         {
             InvincibilityTimer += Time.deltaTime;
 
@@ -222,17 +226,6 @@ public class CharacterObject : MonoBehaviour
             canJump = false;
         }
 
-        //Update bullets shot by player
-        for (int i = 0; i < BulletList.Count; ++i)
-        {
-            GameObject BulletObj = BulletList[i];
-
-            if (BulletObj.activeInHierarchy)
-            {
-                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
-            }
-        }
-
         //Update Character States
         if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
         {
@@ -282,7 +275,7 @@ public class CharacterObject : MonoBehaviour
                 {
                     if (other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                     {
-                        other.gameObject.SetActive(false);
+                        Destroy(other.gameObject);
 
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
