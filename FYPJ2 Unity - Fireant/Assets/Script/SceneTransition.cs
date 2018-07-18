@@ -20,4 +20,12 @@ public class SceneTransition : MonoBehaviour
     {
         SceneManager.LoadScene("about");
     }
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void ToCredit()
+    {
+        SceneManager.LoadScene("Credit");
+    }
 }
