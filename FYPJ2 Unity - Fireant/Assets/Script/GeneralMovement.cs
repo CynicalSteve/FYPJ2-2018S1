@@ -107,8 +107,14 @@ public class GeneralMovement : MonoBehaviour {
     }
 
     //Move towards a direction
+    public void moveBy(Image theGameObject, float movementSpeed, Vector3 Direction)
+    {
+        theGameObject.transform.position += Direction * Time.deltaTime * movementSpeed;
+    }
+
+    //Move towards a direction
     public void moveBy(GameObject theGameObject, float movementSpeed, Vector3 Direction)
     {
-        theGameObject.transform.position += Direction.normalized * Time.deltaTime;
+        theGameObject.transform.position += Direction * Time.deltaTime * movementSpeed;
     }
 }

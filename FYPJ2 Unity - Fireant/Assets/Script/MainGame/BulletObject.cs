@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletObject : MonoBehaviour
 {
     [SerializeField]
-    public float BulletMovementSpeed = 10;
+    public float BulletMovementSpeed = 1500;
 
     GeneralMovement generalMovementScript;
     EnemyManager enemyManager;
@@ -29,7 +29,7 @@ public class BulletObject : MonoBehaviour
     {
         generalMovementScript.moveBy(gameObject, BulletMovementSpeed, Direction);
 
-        if (gameObject.transform.localPosition.x > theCharacter.theCanvas.transform.position.x + theCharacter.theCanvas.GetComponent<RectTransform>().rect.width)
+        if (gameObject.transform.localPosition.x > theCharacter.theCanvas.transform.localPosition.x + theCharacter.theCanvas.GetComponent<RectTransform>().rect.width)
         {
             Destroy(gameObject);
         }

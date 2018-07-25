@@ -141,6 +141,8 @@ public class EnemyObject : MonoBehaviour {
         normalizedDir.z = 0;
         BulletObj.transform.up = normalizedDir;
 
+        //BulletObj.GetComponent<BulletObject>().BulletMovementSpeed = 50;
+
         //Set the bullet's destination to player
         BulletObj.GetComponent<BulletObject>().SetDirection(theCharacter.transform.position - gameObject.transform.position);
 

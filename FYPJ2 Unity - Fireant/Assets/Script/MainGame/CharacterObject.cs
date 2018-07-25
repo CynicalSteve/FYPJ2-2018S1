@@ -281,7 +281,7 @@ public class CharacterObject : MonoBehaviour
         BulletObj.transform.up = normalizedDir;
 
         //Set the bullet's destination to cursor
-        BulletObj.GetComponent<BulletObject>().SetDirection(mousePos);
+        BulletObj.GetComponent<BulletObject>().SetDirection(mousePos - gameObject.transform.position);
 
         //Add bullet obj to list
         BulletList.Add(BulletObj);
@@ -345,6 +345,7 @@ public class CharacterObject : MonoBehaviour
             case "fall":
                 {
                     SceneManager.LoadScene("GameOver");
+                    break;
                 }
             default:
                 break;
