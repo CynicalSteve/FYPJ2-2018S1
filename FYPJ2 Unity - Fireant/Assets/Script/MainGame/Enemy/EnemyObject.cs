@@ -142,7 +142,7 @@ public class EnemyObject : MonoBehaviour {
         BulletObj.transform.up = normalizedDir;
 
         //Set the bullet's destination to player
-        BulletObj.GetComponent<BulletObject>().SetDestination(theCharacter.transform.position);
+        BulletObj.GetComponent<BulletObject>().SetDirection(theCharacter.transform.position - gameObject.transform.position);
 
         //Add bullet obj to list
         gameObject.transform.parent.GetComponent<EnemyManager>().BulletList.Add(BulletObj);

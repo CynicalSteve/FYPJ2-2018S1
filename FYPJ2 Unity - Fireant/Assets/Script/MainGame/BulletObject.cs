@@ -5,12 +5,13 @@ using UnityEngine;
 public class BulletObject : MonoBehaviour
 {
     [SerializeField]
-    const float BulletMovementSpeed = 10;
+    public float BulletMovementSpeed = 10;
 
     GeneralMovement generalMovementScript;
     EnemyManager enemyManager;
     CharacterObject theCharacter;
     Vector3 Destination;
+    Vector3 Direction;
 
     public bool CanHitPlayer = false;
 
@@ -26,7 +27,9 @@ public class BulletObject : MonoBehaviour
     // Update is called once per frame
     public void BulletObjectUpdate()
     {
-        if (generalMovementScript.moveTo(gameObject, BulletMovementSpeed, Destination))
+        generalMovementScript.moveBy(gameObject, BulletMovementSpeed, Direction);
+
+        if (gameObject.transform.localPosition.x > theCharacter.theCanvas.transform.position.x + theCharacter.theCanvas.GetComponent<RectTransform>().rect.width)
         {
             Destroy(gameObject);
         }
@@ -37,8 +40,13 @@ public class BulletObject : MonoBehaviour
         Destination = newDestination;
     }
 
-    public Vector3 GetDesitination()
+    public Vector3 GetDestination()
     {
         return Destination;
+    }
+
+    public void SetDirection(Vector3 newDirection)
+    {
+        Direction = newDirection;
     }
 }
