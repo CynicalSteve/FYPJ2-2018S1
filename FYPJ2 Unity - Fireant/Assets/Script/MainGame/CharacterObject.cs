@@ -342,6 +342,10 @@ public class CharacterObject : MonoBehaviour
 
                     goto default;
                 }
+            case "fall":
+                {
+                    SceneManager.LoadScene("GameOver");
+                }
             default:
                 break;
         }
