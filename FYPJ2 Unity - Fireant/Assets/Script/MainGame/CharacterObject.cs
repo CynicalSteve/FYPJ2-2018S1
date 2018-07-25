@@ -83,6 +83,9 @@ public class CharacterObject : MonoBehaviour
         animator.SetInteger("states", 1);
         charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
         moneytext.text = "Money : " + money.ToString();
+        //Debug.Log("THIS IS THE THINGY "+PlayerPrefs.GetFloat("respawntocheckpoint"));
+        //Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN "+respawnpoint);
+        //Debug.Log("THE CHARACTER POSITION"+transform.position);
         if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
         {
             transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"),PlayerPrefs.GetFloat("respawnhere1"),0);
@@ -393,11 +396,6 @@ public class CharacterObject : MonoBehaviour
             case "Ground":
                 {
                     canJump = true;
-                    goto default;
-                }
-            case "fall":
-                {
-                    SceneManager.LoadScene("GameOver");
                     goto default;
                 }
             default:
