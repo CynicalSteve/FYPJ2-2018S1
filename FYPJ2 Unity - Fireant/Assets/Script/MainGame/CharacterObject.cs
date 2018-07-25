@@ -9,7 +9,7 @@ public class CharacterObject : MonoBehaviour
     private Animator animator;
 
     [SerializeField]
-    Canvas theCanvas;
+    public Canvas theCanvas;
 
     [SerializeField]
     float characterMovementSpeed = 10;
@@ -208,7 +208,6 @@ public class CharacterObject : MonoBehaviour
         {
             if (gameObject.GetComponent<RectTransform>().localPosition.x > theCanvas.transform.position.x - (theCanvas.GetComponent<RectTransform>().rect.width * 0.5f))
             {
-                
                 generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
                 animator.SetInteger("states", 0);
             }
@@ -267,6 +266,8 @@ public class CharacterObject : MonoBehaviour
         //Init Bullet variables
         BulletObj.GetComponent<BulletObject>().BulletObjectInit();
 
+        //BulletObj.GetComponent<BulletObject>().BulletMovementSpeed = 120;
+
         //Set the pos of bullet to the character pos
         BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
 
@@ -280,7 +281,7 @@ public class CharacterObject : MonoBehaviour
         BulletObj.transform.up = normalizedDir;
 
         //Set the bullet's destination to cursor
-        BulletObj.GetComponent<BulletObject>().SetDestination(mousePos);
+        BulletObj.GetComponent<BulletObject>().SetDirection(mousePos);
 
         //Add bullet obj to list
         BulletList.Add(BulletObj);

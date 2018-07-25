@@ -33,7 +33,8 @@ public class GeneralMovement : MonoBehaviour {
     //Move to a specific location
     public bool moveTo(Image theImage, float movementSpeed, Vector3 Destination)
     {
-        Vector3 vectorPos = Vector3.MoveTowards(theImage.transform.position, Destination, movementSpeed * Time.deltaTime);
+        Vector3 newDest = theImage.transform.position + ((Destination - theImage.transform.position) * 2);
+        Vector3 vectorPos = Vector3.MoveTowards(theImage.transform.position, newDest, movementSpeed * Time.deltaTime);
 
         if (vectorPos == theImage.transform.position)
         {
@@ -42,16 +43,6 @@ public class GeneralMovement : MonoBehaviour {
 
         theImage.transform.position = vectorPos;
         return false;
-
-        //Vector3 dirNorm = (Destination - theImage.transform.position).normalized;
-
-        //if(Vector3.Distance(theImage.transform.position, Destination) <= 1)
-        //{
-        //    return true;
-        //}
-
-        //theImage.transform.position += dirNorm * movementSpeed * Time.deltaTime;
-        //return false;
     }
 
     public bool moveToXPos(Image theImage, float movementSpeed, Vector3 Destination)
@@ -113,5 +104,11 @@ public class GeneralMovement : MonoBehaviour {
 
         theGameObject.transform.position.Set(vectorPos.x, theGameObject.transform.position.y, theGameObject.transform.position.z);
         return false;
+    }
+
+    //Move towards a direction
+    public void moveBy(GameObject theGameObject, float movementSpeed, Vector3 Direction)
+    {
+        theGameObject.transform.position += Direction.normalized * Time.deltaTime;
     }
 }
