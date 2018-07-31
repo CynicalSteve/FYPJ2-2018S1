@@ -30,6 +30,7 @@ public class CharacterObject : MonoBehaviour
     [SerializeField]
     Text moneytext;
     [SerializeField]
+    Image HealthBar;
 
     public float money = 0;
     public int lol = 0;
@@ -86,10 +87,13 @@ public class CharacterObject : MonoBehaviour
         //Debug.Log("THIS IS THE THINGY "+PlayerPrefs.GetFloat("respawntocheckpoint"));
         //Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN "+respawnpoint);
         //Debug.Log("THE CHARACTER POSITION"+transform.position);
-        if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
-        {
-            transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"),PlayerPrefs.GetFloat("respawnhere1"),0);
-        }
+        
+        //-------PROBLEMATIC CODE------//
+        //if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
+        //{
+        //    transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"), PlayerPrefs.GetFloat("respawnhere1"), 0);
+        //}
+        //----------------------------//
 
         //Crosshair snap to mouse position
         Vector3 screenPoint = Input.mousePosition;
@@ -300,7 +304,8 @@ public class CharacterObject : MonoBehaviour
 
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
-                            characterHealth -= 10;
+                            DecreaseCharacterHealth(10);
+
                             if(characterHealth<=0)
                                 SceneManager.LoadScene("GameOver");
                         }
@@ -438,15 +443,24 @@ public class CharacterObject : MonoBehaviour
     }
     public void DecreaseCharacterHealth(float reduceAmount)
     {
+        //Update Health Bar Appearance
+        HealthBar.fillAmount = characterHealth / characterHealthLimit;
+
         characterHealth -= reduceAmount;
     }
     public void IncreaseCharacterHealth(float increaseAmount)
     {
+        //Update Health Bar Appearance
+        HealthBar.fillAmount = characterHealth / characterHealthLimit;
+
         characterHealth += increaseAmount;
     }
 
     public void SetCharacterHealth(float newHealth)
     {
+        //Update Health Bar Appearance
+        HealthBar.fillAmount = characterHealth / characterHealthLimit;
+
         characterHealth = newHealth;
     }
 

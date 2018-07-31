@@ -201,5 +201,8 @@ public class EnemyObject : MonoBehaviour {
         {
             Health = MaximumHealth;
         }
+
+        //Update Health Bar Appearance
+        HealthBar.fillAmount = Health / MaximumHealth;
     }
 }
