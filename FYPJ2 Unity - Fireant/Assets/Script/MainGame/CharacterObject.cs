@@ -75,6 +75,12 @@ public class CharacterObject : MonoBehaviour
 
         WeaponsEquipped.Add(new Pistol());
         WeaponsEquipped.Add(new Rifle());
+        WeaponsEquipped.Add(new Rifle02());
+        WeaponsEquipped.Add(new Rifle03());
+        WeaponsEquipped.Add(new Revolver());
+
+        //Init player weapon sprite
+        gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
 
         gameObject.transform.Find("PlayerWeapon").localPosition = gameObject.transform.position;
     }
@@ -197,6 +203,8 @@ public class CharacterObject : MonoBehaviour
             {
                 --CurrentWeapon;
             }
+
+            gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
         }
         
         //Movement
@@ -264,13 +272,22 @@ public class CharacterObject : MonoBehaviour
 
     private void Shoot()
     {
+        //Special Cases
+        if(WeaponsEquipped[CurrentWeapon].WeaponName == "Shotgun")
+        {
+            Quaternion rotation = Quaternion.Euler(gameObject.transform.Find("PlayerWeapon").transform.up);
+            Vector3 myVector = Vector3.one;
+            Vector3 rotateVector = rotation * myVector;
+
+            return;
+        }
+
+
         //Create a bullet and add it as child to Scene control and object List
         GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
 
         //Init Bullet variables
         BulletObj.GetComponent<BulletObject>().BulletObjectInit();
-
-        //BulletObj.GetComponent<BulletObject>().BulletMovementSpeed = 120;
 
         //Set the pos of bullet to the character pos
         BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
@@ -286,6 +303,9 @@ public class CharacterObject : MonoBehaviour
 
         //Set the bullet's destination to cursor
         BulletObj.GetComponent<BulletObject>().SetDirection(mousePos - gameObject.transform.position);
+
+        //Set the bullet's damage
+        BulletObj.GetComponent<BulletObject>().BulletDamage = WeaponsEquipped[CurrentWeapon].WeaponDamage;
 
         //Add bullet obj to list
         BulletList.Add(BulletObj);
@@ -304,9 +324,9 @@ public class CharacterObject : MonoBehaviour
 
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
-                            DecreaseCharacterHealth(10);
+                            DecreaseCharacterHealth(other.gameObject.GetComponent<BulletObject>().BulletDamage);
 
-                            if(characterHealth<=0)
+                            if (characterHealth <= 0)
                                 SceneManager.LoadScene("GameOver");
                         }
                     }
