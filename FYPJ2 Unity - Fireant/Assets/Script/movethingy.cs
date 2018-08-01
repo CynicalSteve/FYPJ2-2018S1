@@ -11,6 +11,11 @@ public class movethingy : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (transform.position.y <20)
+        {
+            transform.Translate(0, 5 * Time.deltaTime, 0);
+        }
+        else
+            transform.Translate(0, -20, 0);
+    }
 }
