@@ -28,4 +28,28 @@ public class SceneTransition : MonoBehaviour
     {
         SceneManager.LoadScene("Credit");
     }
+    public void ToOption()
+    {
+        SceneManager.LoadScene("option");
+    }
+    public void Tolevelone()
+    {
+        SceneManager.LoadScene("levelone");
+    }
+    public void Toleveltwo()
+    {
+        SceneManager.LoadScene("leveltwo");
+    }
+    public void Tolevelthree()
+    {
+        SceneManager.LoadScene("levelthree");
+    }
+    public void Tolevelfour()
+    {
+        SceneManager.LoadScene("levelfour");
+    }
+    public void Tolevelfive()
+    {
+        SceneManager.LoadScene("levelfive");
+    }
 }

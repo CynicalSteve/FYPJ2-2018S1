@@ -8,7 +8,7 @@ public class movethingy : MonoBehaviour {
 	void Start () {
 		
 	}
-	
+	//this script is to move the platform from top to bottom
 	// Update is called once per frame
 	void Update () {
         if (transform.position.y <20)
@@ -16,6 +16,6 @@ public class movethingy : MonoBehaviour {
             transform.Translate(0, 5 * Time.deltaTime, 0);
         }
         else
-            transform.Translate(0, -20, 0);
+            transform.Translate(0, -40, 0);
     }
 }
