@@ -19,9 +19,10 @@ public class EnemyObject : MonoBehaviour {
     float secondsBetweenShots = 1;
     [SerializeField]
     float fireRateTimer;
-
     [SerializeField]
     Image HealthBar;
+    [SerializeField]
+    float WeaponDamage = 10;
 
     bool canShoot = true;
 
@@ -141,7 +142,7 @@ public class EnemyObject : MonoBehaviour {
         normalizedDir.z = 0;
         BulletObj.transform.up = normalizedDir;
 
-        //BulletObj.GetComponent<BulletObject>().BulletMovementSpeed = 50;
+        BulletObj.GetComponent<BulletObject>().BulletDamage = WeaponDamage;
 
         //Set the bullet's destination to player
         BulletObj.GetComponent<BulletObject>().SetDirection(theCharacter.transform.position - gameObject.transform.position);
@@ -161,7 +162,7 @@ public class EnemyObject : MonoBehaviour {
                 if (!other.gameObject.GetComponent<BulletObject>().CanHitPlayer)
                 {
                     Destroy(other.gameObject);
-                    DecreaseHealth(10);
+                    DecreaseHealth(other.gameObject.GetComponent<BulletObject>().BulletDamage);
                 }
             }
         }

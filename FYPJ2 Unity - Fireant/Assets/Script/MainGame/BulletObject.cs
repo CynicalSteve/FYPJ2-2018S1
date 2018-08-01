@@ -6,6 +6,7 @@ public class BulletObject : MonoBehaviour
 {
     [SerializeField]
     public float BulletMovementSpeed = 1500;
+    public float BulletDamage = 10;
 
     GeneralMovement generalMovementScript;
     EnemyManager enemyManager;

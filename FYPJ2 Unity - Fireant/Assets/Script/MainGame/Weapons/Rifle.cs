@@ -7,6 +7,7 @@ public class Rifle : WeaponBase
         WeaponName = "Rifle";
         SecondsBetweenShots = 0.3f;
         WeaponSprite = Resources.Load<Sprite>("RifleTexture");
+        WeaponDamage = 20;
     }
 }
 
