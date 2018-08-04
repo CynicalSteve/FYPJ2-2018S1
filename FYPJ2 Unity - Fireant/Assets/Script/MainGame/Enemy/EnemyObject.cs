@@ -165,6 +165,14 @@ public class EnemyObject : MonoBehaviour {
                     DecreaseHealth(other.gameObject.GetComponent<BulletObject>().BulletDamage);
                 }
             }
+            else if (other.gameObject.tag == "GenericRocket")
+            {
+                if (!other.gameObject.GetComponent<RocketObject>().CanHitPlayer)
+                {
+                    Destroy(other.gameObject);
+                    DecreaseHealth(other.gameObject.GetComponent<RocketObject>().RocketDamage);
+                }
+            }
         }
     }
 

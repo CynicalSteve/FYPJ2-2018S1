@@ -7,6 +7,6 @@ public class RPG : WeaponBase
         WeaponName = "RPG";
         SecondsBetweenShots = 2.0f;
         WeaponSprite = Resources.Load<Sprite>("RPG");
-        WeaponDamage = 50;
+        WeaponDamage = 100;
     }
 }

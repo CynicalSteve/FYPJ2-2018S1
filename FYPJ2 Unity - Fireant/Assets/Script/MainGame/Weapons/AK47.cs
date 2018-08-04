@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class Rifle02 : WeaponBase
+public class AK47 : WeaponBase
 {
-    public Rifle02() //AK-47
+    public AK47() //AK-47
     {
-        WeaponName = "Rifle02";
+        WeaponName = "AK47";
         SecondsBetweenShots = 0.5f;
         WeaponSprite = Resources.Load<Sprite>("AK47");
         WeaponDamage = 35;

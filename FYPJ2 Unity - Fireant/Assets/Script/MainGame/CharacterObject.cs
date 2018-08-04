@@ -62,6 +62,8 @@ public class CharacterObject : MonoBehaviour
 
     bool facingLeft = false;
     double moretest;
+
+    Transform playerWeapon;
     // Use this for initialization
     void Start()
     {
@@ -74,15 +76,13 @@ public class CharacterObject : MonoBehaviour
         gameObject.transform.GetChild(0).GetComponent<Image>();
 
         WeaponsEquipped.Add(new Pistol());
-        WeaponsEquipped.Add(new Rifle());
-        WeaponsEquipped.Add(new Rifle02());
-        WeaponsEquipped.Add(new Rifle03());
-        WeaponsEquipped.Add(new Revolver());
+        WeaponsEquipped.Add(new RPG());
 
         //Init player weapon sprite
-        gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
+        playerWeapon = gameObject.transform.Find("PlayerWeapon");
+        playerWeapon.GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
 
-        gameObject.transform.Find("PlayerWeapon").localPosition = gameObject.transform.position;
+        playerWeapon.localPosition = gameObject.transform.position;
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
@@ -122,8 +122,8 @@ public class CharacterObject : MonoBehaviour
         //Weapon Rot
         Vector3 normalizedDir = (mousePos - gameObject.transform.position).normalized;
         normalizedDir.z = 0;
-        gameObject.transform.Find("PlayerWeapon").transform.up = normalizedDir;
-        
+        playerWeapon.up = normalizedDir;
+
         KeyInputs();
 
         //Update bullets shot by player
@@ -137,7 +137,14 @@ public class CharacterObject : MonoBehaviour
 
             if (BulletObj.activeSelf)
             {
-                BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+                if (BulletObj.tag == "GenericBullet")
+                {
+                    BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+                }
+                else if(BulletObj.tag == "GenericRocket")
+                {
+                    BulletObj.GetComponent<RocketObject>().RocketObjectUpdate();
+                }
             }
         }
 
@@ -191,7 +198,7 @@ public class CharacterObject : MonoBehaviour
                 ++CurrentWeapon;
             }
 
-            gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
+            playerWeapon.GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f) //backwards
         {
@@ -205,7 +212,7 @@ public class CharacterObject : MonoBehaviour
                 --CurrentWeapon;
             }
 
-            gameObject.transform.Find("PlayerWeapon").GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
+            playerWeapon.GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
         }
         
         //Movement
@@ -273,43 +280,55 @@ public class CharacterObject : MonoBehaviour
 
     private void Shoot()
     {
-        //Special Cases
-        if(WeaponsEquipped[CurrentWeapon].WeaponName == "Shotgun")
-        {
-            Quaternion rotation = Quaternion.Euler(gameObject.transform.Find("PlayerWeapon").transform.up);
-            Vector3 myVector = Vector3.one;
-            Vector3 rotateVector = rotation * myVector;
-
-            return;
-        }
-
-
-        //Create a bullet and add it as child to Scene control and object List
-        GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
-
-        //Init Bullet variables
-        BulletObj.GetComponent<BulletObject>().BulletObjectInit();
-
-        //Set the pos of bullet to the character pos
-        BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+        GameObject Projectile = null;
 
         //Get mouse position by converting the pos from screen space to world space
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
-        //Rotate the bullet in the direction of destination
-        Vector3 normalizedDir = (mousePos - BulletObj.transform.position).normalized;
-        normalizedDir.z = 0;
-        BulletObj.transform.up = normalizedDir;
+        //Create a projectile and add it as child to Scene control and object List
+        if (WeaponsEquipped[CurrentWeapon].WeaponName == "RPG")
+        {
+            Projectile = Instantiate(Resources.Load("GenericRocket") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
 
-        //Set the bullet's destination to cursor
-        BulletObj.GetComponent<BulletObject>().SetDirection(mousePos - gameObject.transform.position);
+            //Init Rocket variables
+            Projectile.GetComponent<RocketObject>().RocketObjectInit();
 
-        //Set the bullet's damage
-        BulletObj.GetComponent<BulletObject>().BulletDamage = WeaponsEquipped[CurrentWeapon].WeaponDamage;
+            //Set the rocket's damage
+            Projectile.GetComponent<RocketObject>().RocketDamage= WeaponsEquipped[CurrentWeapon].WeaponDamage;
 
+            //Rotate the bullet in the direction of destination
+            Vector3 normalizedDir = (mousePos - Projectile.transform.position).normalized;
+            normalizedDir.z = 0;
+            Projectile.transform.up = normalizedDir;
+
+            //Set the bullet's destination to cursor
+            Projectile.GetComponent<RocketObject>().SetDirection(mousePos - gameObject.transform.position);
+        }
+        else 
+        {
+            Projectile = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
+
+            //Init Bullet variables
+            Projectile.GetComponent<BulletObject>().BulletObjectInit();
+
+            //Set the bullet's damage
+            Projectile.GetComponent<BulletObject>().BulletDamage = WeaponsEquipped[CurrentWeapon].WeaponDamage;
+
+            //Rotate the bullet in the direction of destination
+            Vector3 normalizedDir = (mousePos - Projectile.transform.position).normalized;
+            normalizedDir.z = 0;
+            Projectile.transform.up = normalizedDir;
+
+            //Set the bullet's destination to cursor
+            Projectile.GetComponent<BulletObject>().SetDirection(mousePos - gameObject.transform.position);
+        }
+
+        //Set the pos of bullet to the character pos
+        Projectile.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+        
         //Add bullet obj to list
-        BulletList.Add(BulletObj);
+        BulletList.Add(Projectile);
     }
 
     //Collision
@@ -357,7 +376,7 @@ public class CharacterObject : MonoBehaviour
                         return;
                     }
 
-                    characterHealth += 20;
+                    IncreaseCharacterHealth(20);
 
                     if (characterHealth > characterHealthLimit)
                     {
@@ -371,6 +390,55 @@ public class CharacterObject : MonoBehaviour
             case "fall":
                 {
                     SceneManager.LoadScene("GameOver");
+                    break;
+                }
+            case "Weapon":
+                {
+                    //Check if player already has the weapon
+                    foreach(WeaponBase Weapon in WeaponsEquipped)
+                    {
+                        if(Weapon.WeaponName == other.name)
+                        {
+                            return;
+                        }
+                    }
+                    
+                    if(other.name == "LMG")
+                    {
+                        WeaponsEquipped.Add(new LMG());
+                    }
+                    else if(other.name == "Minigun")
+                    {
+                        WeaponsEquipped.Add(new Minigun());
+                    }
+                    else if (other.name == "Pistol")
+                    {
+                        WeaponsEquipped.Add(new Pistol());
+                    }
+                    else if (other.name == "Revolver")
+                    {
+                        WeaponsEquipped.Add(new Revolver());
+                    }
+                    else if (other.name == "Rifle")
+                    {
+                        WeaponsEquipped.Add(new Rifle());
+                    }
+                    else if (other.name == "AK47")
+                    {
+                        WeaponsEquipped.Add(new AK47());
+                    }
+                    else if (other.name == "Carbine")
+                    {
+                        WeaponsEquipped.Add(new Carbine());
+                    }
+                    else if (other.name == "RPG")
+                    {
+                        WeaponsEquipped.Add(new RPG());
+                    }
+
+                    //Equip the newly picked up weapon
+                    CurrentWeapon = WeaponsEquipped.Count - 1;
+
                     break;
                 }
             default:
@@ -403,24 +471,6 @@ public class CharacterObject : MonoBehaviour
             case "InvincibilityPowerup":
                 {
                     characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
-                    Destroy(collision.gameObject);
-
-                    goto default;
-                }
-            case "HealthPowerup":
-                {
-                    if (characterHealth >= characterHealthLimit)
-                    {
-                        return;
-                    }
-
-                    characterHealth += 20;
-
-                    if (characterHealth > characterHealthLimit)
-                    {
-                        characterHealth = characterHealthLimit;
-                    }
-
                     Destroy(collision.gameObject);
 
                     goto default;
