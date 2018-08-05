@@ -19,12 +19,13 @@ public class CharacterObject : MonoBehaviour
 
     [SerializeField]
     float characterHealthLimit = 100;
-
-    [SerializeField]
-    float characterAttackDamage = 10;
     
     [SerializeField]
     float InvincibilityTimeLimit = 5;
+
+    [SerializeField]
+    float BerserkTimeLimit = 8;
+
     [SerializeField]
     Text charhealth;
     [SerializeField]
@@ -35,6 +36,11 @@ public class CharacterObject : MonoBehaviour
     public float money = 0;
     public int lol = 0;
     public Vector3 respawnpoint;
+
+    SpriteRenderer spriteRenderer = null;
+    private Color defaultColour;
+    private Color BerserkColour;
+    private float BerserkMovementModifer = 1, BerserkDamageModifier = 1, BerserkShootSpeedModifier = 1;
 
     public enum CHARACTER_STATE
     {
@@ -54,7 +60,8 @@ public class CharacterObject : MonoBehaviour
     private List<WeaponBase> WeaponsEquipped = new List<WeaponBase>();
     private int CurrentWeapon = 0;
 
-    float InvincibilityTimer = 0;
+    bool isBerserk = false;
+    float InvincibilityTimer = 0, BerserkTimer = 0;
     float fireRateTimer = 0;
     bool canShoot = true, canJump = true;
     //lol1 is to pass the boolean to the scenetransition script to let it know whether it has touched the checkpoint
@@ -83,6 +90,11 @@ public class CharacterObject : MonoBehaviour
         playerWeapon.GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
 
         playerWeapon.localPosition = gameObject.transform.position;
+
+        //Get player color
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        defaultColour = spriteRenderer.color;
+        BerserkColour = new Color(0.7803f, 0.1490f, 0.1490f, 1);
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
@@ -157,6 +169,21 @@ public class CharacterObject : MonoBehaviour
             {
                 InvincibilityTimer = 0;
                 characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
+                Destroy(gameObject.transform.Find("shield(Clone)").gameObject);
+            }
+        }
+        if(isBerserk)
+        {
+            BerserkTimer += Time.deltaTime;
+
+            if(BerserkTimer >= BerserkTimeLimit)
+            {
+                BerserkTimer = 0;
+                isBerserk = false;
+                spriteRenderer.color = defaultColour;
+
+                //Modifiers
+                BerserkDamageModifier = BerserkMovementModifer = BerserkShootSpeedModifier = 1;
             }
         }
     }
@@ -175,7 +202,7 @@ public class CharacterObject : MonoBehaviour
         {
             if (!canShoot)
             {
-                fireRateTimer += Time.deltaTime;
+                fireRateTimer += Time.deltaTime * BerserkShootSpeedModifier;
 
                 if (fireRateTimer >= WeaponsEquipped[CurrentWeapon].SecondsBetweenShots)
                 {
@@ -216,19 +243,16 @@ public class CharacterObject : MonoBehaviour
         }
         
         //Movement
-            if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
             generalMovementScript.moveUp(characterTexture, characterMovementSpeed);
         }
-        if (Input.GetKey(KeyCode.S))
-        {
-            generalMovementScript.moveDown(characterTexture, characterMovementSpeed);
-        }
+        
         if (Input.GetKey(KeyCode.A))
         {
             if (gameObject.GetComponent<RectTransform>().localPosition.x > theCanvas.transform.position.x - (theCanvas.GetComponent<RectTransform>().rect.width * 0.5f))
             {
-                generalMovementScript.moveLeft(characterTexture, characterMovementSpeed);
+                generalMovementScript.moveLeft(characterTexture, characterMovementSpeed * BerserkMovementModifer);
                 animator.SetInteger("states", 0);
             }
         }
@@ -248,13 +272,13 @@ public class CharacterObject : MonoBehaviour
                         continue;
                     }
 
-                    generalMovementScript.moveLeft(theGameObject, characterMovementSpeed);
+                    generalMovementScript.moveLeft(theGameObject, characterMovementSpeed * BerserkMovementModifer);
                 }
 
             }
             else //Move the character
             {
-                generalMovementScript.moveRight(characterTexture, characterMovementSpeed);
+                generalMovementScript.moveRight(characterTexture, characterMovementSpeed * BerserkMovementModifer);
             }
 
             animator.SetInteger("states", 0);
@@ -344,7 +368,7 @@ public class CharacterObject : MonoBehaviour
 
                         if (characterState == CHARACTER_STATE.CHARACTERSTATE_NORMAL)
                         {
-                            DecreaseCharacterHealth(other.gameObject.GetComponent<BulletObject>().BulletDamage);
+                            DecreaseCharacterHealth(other.gameObject.GetComponent<BulletObject>().BulletDamage * BerserkDamageModifier);
 
                             if (characterHealth <= 0)
                                 SceneManager.LoadScene("GameOver");
@@ -364,9 +388,23 @@ public class CharacterObject : MonoBehaviour
                 }
             case "InvincibilityPowerup":
                 {
+                    if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+                    {
+                        //If player already invincible, reset the timer
+                        InvincibilityTimer = InvincibilityTimeLimit;
+                        return;
+                    }
+
                     characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
                     Destroy(other.gameObject);
 
+                    //Create a shield around player
+                    GameObject shield = Instantiate(Resources.Load("shield") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform);
+                    Image shieldImage = shield.GetComponent<Image>();
+                    var tempcolour = shieldImage.color;
+                    tempcolour.a = 0.5f;
+                    shieldImage.color = tempcolour;
+                    
                     goto default;
                 }
             case "HealthPowerup":
@@ -384,6 +422,24 @@ public class CharacterObject : MonoBehaviour
                     }
 
                     Destroy(other.gameObject);
+
+                    goto default;
+                }
+            case "BerserkPowerup":
+                {
+                    if(isBerserk)
+                    {
+                        return;
+                    }
+
+                    isBerserk = true;
+                    spriteRenderer.color = BerserkColour;
+                    Destroy(other.gameObject);
+
+                    //Modifiers
+                    BerserkDamageModifier = 0.75f;
+                    BerserkMovementModifer = 1.25f;
+                    BerserkShootSpeedModifier = 1.25f;
 
                     goto default;
                 }
@@ -533,15 +589,5 @@ public class CharacterObject : MonoBehaviour
         HealthBar.fillAmount = characterHealth / characterHealthLimit;
 
         characterHealth = newHealth;
-    }
-
-    public float GetCharacterAttackDamage()
-    {
-        return characterAttackDamage;
-    }
-
-    public void SetCharacterAttackDamage(uint newAttackDamage)
-    {
-        characterAttackDamage = newAttackDamage;
     }
 }
