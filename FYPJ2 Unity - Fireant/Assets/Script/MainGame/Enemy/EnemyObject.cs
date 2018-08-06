@@ -3,47 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyObject : MonoBehaviour {
+public class EnemyObject : EnemyBase {
     
-    [SerializeField]
-    float DetectionRadius = 500;
-    [SerializeField]
-    float AttackRadius = 50;
-    [SerializeField]
-    float Health = 100;
-    [SerializeField]
-    float MaximumHealth = 100;
-    [SerializeField]
-    float MovementSpeed = 10;
-    [SerializeField]
-    float secondsBetweenShots = 1;
-    [SerializeField]
-    float fireRateTimer;
-    [SerializeField]
-    Image HealthBar;
-    [SerializeField]
-    float WeaponDamage = 10;
-
-    bool canShoot = true;
-
-    STATE_ENEMY enemyState;
-
-    CharacterObject theCharacter;
-    GeneralMovement generalMovementScript;
-    Image enemyTexture;
-
-    enum STATE_ENEMY
-    {
-        STATE_IDLE,
-        STATE_CHASE,
-        STATE_ATTACK,
-
-        TOTAL_ENEMY_STATES
-    }
-
     // Use this for initialization
-    public void EnemyObjectInit() {
-
+    override public void EnemyInit()
+    {
         //Ignore collision with own Enemy layer
         Physics2D.IgnoreLayerCollision(9, 9);
 
@@ -58,11 +22,10 @@ public class EnemyObject : MonoBehaviour {
 
         fireRateTimer = Random.Range(0, secondsBetweenShots);
      
-        Vector3 a = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
-        
+        Vector3 a = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0); 
     }
 	
-	public void EnemyObjectUpdate() {
+	override public void EnemyUpdate() {
 
         float playerEnemyDistance = (theCharacter.transform.position - gameObject.transform.position).magnitude;
         
@@ -121,36 +84,7 @@ public class EnemyObject : MonoBehaviour {
         }
 
     }
-
-    void Shoot()
-    {
-        
-        //Create a bullet and add it as child to Scene control and object List
-        GameObject BulletObj = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
-
-        //Init Bullet variables
-        BulletObj.GetComponent<BulletObject>().BulletObjectInit();
-
-        //Set the bullet to be able to hit player
-        BulletObj.GetComponent<BulletObject>().CanHitPlayer = true;
-
-        //Set the pos of bullet to the enemy pos
-        BulletObj.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
-
-        //Rotate the bullet in the direction of destination
-        Vector3 normalizedDir = (theCharacter.transform.position - BulletObj.transform.position).normalized;
-        normalizedDir.z = 0;
-        BulletObj.transform.up = normalizedDir;
-
-        BulletObj.GetComponent<BulletObject>().BulletDamage = WeaponDamage;
-
-        //Set the bullet's destination to player
-        BulletObj.GetComponent<BulletObject>().SetDirection(theCharacter.transform.position - gameObject.transform.position);
-
-        //Add bullet obj to list
-        gameObject.transform.parent.GetComponent<EnemyManager>().BulletList.Add(BulletObj);
-    }
-
+    
     //Collision
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -174,44 +108,5 @@ public class EnemyObject : MonoBehaviour {
                 }
             }
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-    }
-
-    //Getters & setters
-    public float GetHealth()
-    {
-        return Health;
-    }
-    public void SetHealth(float newHealth)
-    {
-        Health = newHealth;
-    }
-    public void DecreaseHealth(float reduceAmount)
-    {
-        Health -= reduceAmount;
-        
-        //Update Health Bar Appearance
-        HealthBar.fillAmount = Health / MaximumHealth;
-
-        if (Health <= 0)
-        {
-            Destroy(gameObject);
-            theCharacter.money += 20;
-        }
-    }
-    public void IncreaseHealth(float increaseAmount)
-    {
-        Health += increaseAmount;
-
-        if(Health > MaximumHealth)
-        {
-            Health = MaximumHealth;
-        }
-
-        //Update Health Bar Appearance
-        HealthBar.fillAmount = Health / MaximumHealth;
     }
 }

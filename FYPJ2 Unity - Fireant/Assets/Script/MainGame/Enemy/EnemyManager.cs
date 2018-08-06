@@ -24,7 +24,7 @@ public class EnemyManager : MonoBehaviour {
         for(int i = 0; i < gameObject.transform.childCount; ++i)
         {
             GameObject enemyObj = gameObject.transform.GetChild(i).gameObject;
-            enemyObj.GetComponent<EnemyObject>().EnemyObjectInit();
+            enemyObj.GetComponent<EnemyBase>().EnemyInit();
 
             EnemyList.Add(enemyObj);
         }
@@ -40,7 +40,7 @@ public class EnemyManager : MonoBehaviour {
                 continue;
             }
 
-            Enemy.GetComponent<EnemyObject>().EnemyObjectUpdate();
+            Enemy.GetComponent<EnemyBase>().EnemyUpdate();
         }
 
         //Update bullets shot by enemy
