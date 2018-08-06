@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyObject : EnemyBase {
+public class Enemy02 : EnemyBase {
     
     // Use this for initialization
     override public void EnemyInit()
@@ -21,8 +21,6 @@ public class EnemyObject : EnemyBase {
         gameObject.transform.Translate(0, theCharacter.transform.position.y, 0);
 
         fireRateTimer = Random.Range(0, secondsBetweenShots);
-     
-        Vector3 a = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0); 
     }
 	
 	override public void EnemyUpdate() {
