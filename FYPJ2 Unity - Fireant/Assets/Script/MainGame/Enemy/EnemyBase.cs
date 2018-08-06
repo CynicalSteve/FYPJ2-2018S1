@@ -1,5 +1,4 @@
-﻿using Unity;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class EnemyBase : MonoBehaviour
