@@ -7,6 +7,9 @@ public class EnemyManager : MonoBehaviour {
     public List<GameObject> EnemyList = new List<GameObject>();
 
     public List<GameObject> BulletList = new List<GameObject>();
+
+    GameObject theCharacter;
+
     // Use this for initialization
     public void EnemyManagerInit() {
 
@@ -21,7 +24,9 @@ public class EnemyManager : MonoBehaviour {
         //    EnemyList.Add(enemyObj);
         //}
 
-        for(int i = 0; i < gameObject.transform.childCount; ++i)
+        theCharacter = GameObject.FindGameObjectWithTag("MainCharacter");
+
+        for (int i = 0; i < gameObject.transform.childCount; ++i)
         {
             GameObject enemyObj = gameObject.transform.GetChild(i).gameObject;
             enemyObj.GetComponent<EnemyBase>().EnemyInit();
@@ -34,7 +39,7 @@ public class EnemyManager : MonoBehaviour {
     {
         foreach(GameObject Enemy in EnemyList)
         {
-            if(!Enemy)
+            if(!Enemy || !Enemy.activeSelf)
             {
                 EnemyList.Remove(Enemy);
                 continue;
@@ -55,6 +60,17 @@ public class EnemyManager : MonoBehaviour {
             if (BulletObj.activeSelf)
             {
                 BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
+            }
+
+            //if (BulletObj.transform.localPosition.x > theCanvas.transform.localPosition.x + Screen.width || BulletObj.transform.localPosition.x < theCanvas.transform.localPosition.x - Screen.width ||
+            //    BulletObj.transform.localPosition.y > theCanvas.transform.localPosition.y + Screen.height || BulletObj.transform.localPosition.y < theCanvas.transform.localPosition.y - Screen.height)
+            //{
+            //    Destroy(BulletObj);
+            //}
+
+        if((BulletObj.transform.position - theCharacter.transform.position).magnitude > 500)
+            {
+                Destroy(BulletObj);
             }
         }
     }

@@ -81,6 +81,19 @@ public class Enemy03 : EnemyBase {
                 break;
         }
 
+        //Face player direction
+        if (theCharacter.transform.localPosition.y - gameObject.transform.localPosition.y < 0)
+        {
+            if (enemyDirection != DIRECTION.DIRECTION_LEFT)
+            {
+                enemyDirection = DIRECTION.DIRECTION_LEFT;
+                gameObject.transform.Rotate(Vector3.up, 180);
+            }
+        }
+        else if (enemyDirection != DIRECTION.DIRECTION_RIGHT)
+        {
+            enemyDirection = DIRECTION.DIRECTION_RIGHT;
+        }
     }
     
     //Collision

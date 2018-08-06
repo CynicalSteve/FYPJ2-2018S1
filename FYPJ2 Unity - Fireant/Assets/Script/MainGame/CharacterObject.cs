@@ -141,7 +141,7 @@ public class CharacterObject : MonoBehaviour
         //Update bullets shot by player
         foreach (GameObject BulletObj in BulletList)
         {
-            if (!BulletObj)
+            if (!BulletObj || !BulletObj.activeSelf)
             {
                 BulletList.Remove(BulletObj);
                 continue;
@@ -157,6 +157,13 @@ public class CharacterObject : MonoBehaviour
                 {
                     BulletObj.GetComponent<RocketObject>().RocketObjectUpdate();
                 }
+            }
+
+            //Check if out of screen
+            if(BulletObj.transform.position.x > theCanvas.transform.localPosition.x + Screen.width || BulletObj.transform.position.x < theCanvas.transform.localPosition.x - Screen.width ||
+                BulletObj.transform.position.y > theCanvas.transform.localPosition.y + Screen.height || BulletObj.transform.position.y < theCanvas.transform.localPosition.y - Screen.height)
+            {
+                Destroy(BulletObj);
             }
         }
 

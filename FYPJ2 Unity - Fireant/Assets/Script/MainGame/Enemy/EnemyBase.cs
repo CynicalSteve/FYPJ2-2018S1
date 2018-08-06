@@ -25,6 +25,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected bool canShoot = true;
 
     protected STATE_ENEMY enemyState;
+    protected DIRECTION enemyDirection = DIRECTION.DIRECTION_LEFT;
 
     protected CharacterObject theCharacter;
     protected GeneralMovement generalMovementScript;
@@ -37,6 +38,14 @@ public abstract class EnemyBase : MonoBehaviour
         STATE_ATTACK,
 
         TOTAL_ENEMY_STATES
+    }
+
+    protected enum DIRECTION
+    {
+        DIRECTION_LEFT,
+        DIRECTION_RIGHT,
+
+        TOTAL_DIRECTION
     }
 
     public abstract void EnemyInit();
