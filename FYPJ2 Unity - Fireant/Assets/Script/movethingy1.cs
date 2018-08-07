@@ -31,6 +31,5 @@ public class movethingy1 : MonoBehaviour
             }
         }
         Destroy(gameObject,22);
-        Debug.Log(transform.position.x);
     }
 }

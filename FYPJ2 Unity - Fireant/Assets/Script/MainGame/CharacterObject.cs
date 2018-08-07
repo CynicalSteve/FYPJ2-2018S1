@@ -84,6 +84,7 @@ public class CharacterObject : MonoBehaviour
 
         WeaponsEquipped.Add(new Pistol());
         WeaponsEquipped.Add(new RPG());
+        WeaponsEquipped.Add(new Carbine());
 
         //Init player weapon sprite
         playerWeapon = gameObject.transform.Find("PlayerWeapon");
@@ -461,6 +462,8 @@ public class CharacterObject : MonoBehaviour
                 }
             case "Weapon":
                 {
+                    Destroy(other.gameObject);
+
                     //Check if player already has the weapon
                     foreach (WeaponBase Weapon in WeaponsEquipped)
                     {
