@@ -19,7 +19,7 @@ public class CharacterObject : MonoBehaviour
 
     [SerializeField]
     float characterHealthLimit = 100;
-    
+
     [SerializeField]
     float InvincibilityTimeLimit = 5;
 
@@ -95,6 +95,14 @@ public class CharacterObject : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         defaultColour = spriteRenderer.color;
         BerserkColour = new Color(0.7803f, 0.1490f, 0.1490f, 1);
+
+        Debug.Log(PlayerPrefs.GetFloat("respawntocheckpoint"));
+        if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
+        {
+            transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"), PlayerPrefs.GetFloat("respawnhere1"), 0);
+            PlayerPrefs.DeleteKey("respawntocheckpoint");
+            PlayerPrefs.DeleteKey("savecheckpoint");
+        }
     }
     // Update is called once per frame
     public void MainCharacterUpdate()
@@ -102,16 +110,12 @@ public class CharacterObject : MonoBehaviour
         animator.SetInteger("states", 1);
         charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
         moneytext.text = "Money : " + money.ToString();
-        Debug.Log("THIS IS THE THINGY " + PlayerPrefs.GetFloat("respawntocheckpoint"));
-        Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN " + respawnpoint);
-        Debug.Log("THE CHARACTER POSITION" + transform.position);
+        //Debug.Log("THIS IS THE THINGY " + PlayerPrefs.GetFloat("respawntocheckpoint"));
+        //Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN " + respawnpoint);
+        //Debug.Log("THE CHARACTER POSITION" + transform.position);
 
         //-------PROBLEMATIC CODE------//
-        if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
-        {
-            transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"), PlayerPrefs.GetFloat("respawnhere1"), 0);
-            PlayerPrefs.DeleteAll();
-        }
+
         //----------------------------//
 
         //Crosshair snap to mouse position
@@ -153,14 +157,14 @@ public class CharacterObject : MonoBehaviour
                 {
                     BulletObj.GetComponent<BulletObject>().BulletObjectUpdate();
                 }
-                else if(BulletObj.tag == "GenericRocket")
+                else if (BulletObj.tag == "GenericRocket")
                 {
                     BulletObj.GetComponent<RocketObject>().RocketObjectUpdate();
                 }
             }
 
             //Check if out of screen
-            if(BulletObj.transform.position.x > theCanvas.transform.localPosition.x + Screen.width || BulletObj.transform.position.x < theCanvas.transform.localPosition.x - Screen.width ||
+            if (BulletObj.transform.position.x > theCanvas.transform.localPosition.x + Screen.width || BulletObj.transform.position.x < theCanvas.transform.localPosition.x - Screen.width ||
                 BulletObj.transform.position.y > theCanvas.transform.localPosition.y + Screen.height || BulletObj.transform.position.y < theCanvas.transform.localPosition.y - Screen.height)
             {
                 Destroy(BulletObj);
@@ -172,18 +176,18 @@ public class CharacterObject : MonoBehaviour
         {
             InvincibilityTimer += Time.deltaTime;
 
-            if(InvincibilityTimer >= InvincibilityTimeLimit)
+            if (InvincibilityTimer >= InvincibilityTimeLimit)
             {
                 InvincibilityTimer = 0;
                 characterState = CHARACTER_STATE.CHARACTERSTATE_NORMAL;
                 Destroy(gameObject.transform.Find("shield(Clone)").gameObject);
             }
         }
-        if(isBerserk)
+        if (isBerserk)
         {
             BerserkTimer += Time.deltaTime;
 
-            if(BerserkTimer >= BerserkTimeLimit)
+            if (BerserkTimer >= BerserkTimeLimit)
             {
                 BerserkTimer = 0;
                 isBerserk = false;
@@ -248,13 +252,13 @@ public class CharacterObject : MonoBehaviour
 
             playerWeapon.GetComponent<Image>().sprite = WeaponsEquipped[CurrentWeapon].WeaponSprite;
         }
-        
+
         //Movement
         if (Input.GetKey(KeyCode.W))
         {
             generalMovementScript.moveUp(characterTexture, characterMovementSpeed);
         }
-        
+
         if (Input.GetKey(KeyCode.A))
         {
             if (gameObject.GetComponent<RectTransform>().localPosition.x > theCanvas.transform.position.x - (theCanvas.GetComponent<RectTransform>().rect.width * 0.5f))
@@ -326,7 +330,7 @@ public class CharacterObject : MonoBehaviour
             Projectile.GetComponent<RocketObject>().RocketObjectInit();
 
             //Set the rocket's damage
-            Projectile.GetComponent<RocketObject>().RocketDamage= WeaponsEquipped[CurrentWeapon].WeaponDamage;
+            Projectile.GetComponent<RocketObject>().RocketDamage = WeaponsEquipped[CurrentWeapon].WeaponDamage;
 
             //Rotate the bullet in the direction of destination
             Vector3 normalizedDir = (mousePos - Projectile.transform.position).normalized;
@@ -336,7 +340,7 @@ public class CharacterObject : MonoBehaviour
             //Set the bullet's destination to cursor
             Projectile.GetComponent<RocketObject>().SetDirection(mousePos - gameObject.transform.position);
         }
-        else 
+        else
         {
             Projectile = Instantiate(Resources.Load("GenericBullet") as GameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent.transform);
 
@@ -357,7 +361,7 @@ public class CharacterObject : MonoBehaviour
 
         //Set the pos of bullet to the character pos
         Projectile.transform.position.Set(gameObject.transform.position.x, gameObject.transform.position.y, 0);
-        
+
         //Add bullet obj to list
         BulletList.Add(Projectile);
     }
@@ -365,7 +369,7 @@ public class CharacterObject : MonoBehaviour
     //Collision
     void OnTriggerEnter2D(Collider2D other)
     {
-        switch(other.gameObject.tag)
+        switch (other.gameObject.tag)
         {
             case "GenericBullet":
                 {
@@ -395,7 +399,7 @@ public class CharacterObject : MonoBehaviour
                 }
             case "InvincibilityPowerup":
                 {
-                    if(characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
+                    if (characterState == CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE)
                     {
                         //If player already invincible, reset the timer
                         InvincibilityTimer = InvincibilityTimeLimit;
@@ -411,7 +415,7 @@ public class CharacterObject : MonoBehaviour
                     var tempcolour = shieldImage.color;
                     tempcolour.a = 0.5f;
                     shieldImage.color = tempcolour;
-                    
+
                     goto default;
                 }
             case "HealthPowerup":
@@ -434,7 +438,7 @@ public class CharacterObject : MonoBehaviour
                 }
             case "BerserkPowerup":
                 {
-                    if(isBerserk)
+                    if (isBerserk)
                     {
                         return;
                     }
@@ -458,19 +462,19 @@ public class CharacterObject : MonoBehaviour
             case "Weapon":
                 {
                     //Check if player already has the weapon
-                    foreach(WeaponBase Weapon in WeaponsEquipped)
+                    foreach (WeaponBase Weapon in WeaponsEquipped)
                     {
-                        if(Weapon.WeaponName == other.name)
+                        if (Weapon.WeaponName == other.name)
                         {
                             return;
                         }
                     }
-                    
-                    if(other.name == "LMG")
+
+                    if (other.name == "LMG")
                     {
                         WeaponsEquipped.Add(new LMG());
                     }
-                    else if(other.name == "Minigun")
+                    else if (other.name == "Minigun")
                     {
                         WeaponsEquipped.Add(new Minigun());
                     }
@@ -508,7 +512,7 @@ public class CharacterObject : MonoBehaviour
                 break;
         }
 
-         if(other.gameObject.name == "IgnoreCollisionTrigger")
+        if (other.gameObject.name == "IgnoreCollisionTrigger")
         {
             if (!Physics2D.GetIgnoreCollision(gameObject.GetComponent<Collider2D>(), other.gameObject.transform.parent.GetComponent<Collider2D>()))
             {
@@ -520,9 +524,11 @@ public class CharacterObject : MonoBehaviour
             respawnpoint = other.transform.position;
             Destroy(other.gameObject);
             lol++;
+            PlayerPrefs.SetString("lastloadedscene", SceneManager.GetActiveScene().name);
             PlayerPrefs.SetFloat("savecheckpoint", lol);
             PlayerPrefs.SetFloat("respawnhere", respawnpoint.x);
             PlayerPrefs.SetFloat("respawnhere1", respawnpoint.y);
+
         }
     }
 

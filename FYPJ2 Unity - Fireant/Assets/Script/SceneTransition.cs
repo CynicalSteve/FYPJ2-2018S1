@@ -7,14 +7,15 @@ public class SceneTransition : MonoBehaviour
     int lol1 = 0;
     public void ToGame()
     {
+
         if (PlayerPrefs.GetFloat("savecheckpoint") >= 1)
         {
             lol1++;
             PlayerPrefs.SetFloat("respawntocheckpoint", lol1);
-            SceneManager.LoadScene("Main Scene");
+            SceneManager.LoadScene(PlayerPrefs.GetString("lastloadedscene"));
         }
         else
-            SceneManager.LoadScene("Main Scene");
+            SceneManager.LoadScene(PlayerPrefs.GetString("lastloadedscene"));
     }
     public void ToAbout()
     {
