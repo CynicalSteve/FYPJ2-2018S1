@@ -504,6 +504,13 @@ public class CharacterObject : MonoBehaviour
 
                     break;
                 }
+            case "LevelEnd":
+                {
+                    SceneTransition sceneTransition = new SceneTransition();
+                    sceneTransition.Tolevelend();
+                    break;
+                }
+
             default:
                 break;
         }
@@ -531,13 +538,6 @@ public class CharacterObject : MonoBehaviour
     {
         switch (collision.gameObject.tag)
         {
-            case "InvincibilityPowerup":
-                {
-                    characterState = CHARACTER_STATE.CHARACTERSTATE_INVINCIBLE;
-                    Destroy(collision.gameObject);
-
-                    goto default;
-                }
             case "Ground":
                 {
                     canJump = true;
