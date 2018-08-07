@@ -57,4 +57,8 @@ public class SceneTransition : MonoBehaviour
     {
         SceneManager.LoadScene("levelend");
     }
+    public void Tolevelselect()
+    {
+        SceneManager.LoadScene("levelselect");
+    }
 }
