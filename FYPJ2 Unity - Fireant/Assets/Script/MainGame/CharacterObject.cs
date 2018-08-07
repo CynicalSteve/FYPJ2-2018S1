@@ -538,7 +538,6 @@ public class CharacterObject : MonoBehaviour
             PlayerPrefs.SetFloat("savecheckpoint", lol);
             PlayerPrefs.SetFloat("respawnhere", respawnpoint.x);
             PlayerPrefs.SetFloat("respawnhere1", respawnpoint.y);
-
         }
     }
 
