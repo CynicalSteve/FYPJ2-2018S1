@@ -53,4 +53,8 @@ public class SceneTransition : MonoBehaviour
     {
         SceneManager.LoadScene("levelfive");
     }
+    public void Tolevelend()
+    {
+        SceneManager.LoadScene("levelend");
+    }
 }

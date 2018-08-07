@@ -27,6 +27,11 @@ public class MainMenuSceneControl : MonoBehaviour {
 
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU] = GameObject.FindGameObjectWithTag("MainScreen");
         ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU].SetActive(false);
+
+        //for (int i = 0; i < ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU].transform.childCount; ++i)
+        //{
+        //    ScreenList[(short)MAIN_MENU_SCREEN.SCREEN_MAINMENU].transform.GetChild(i).transform
+        //}
     }
 	
 	// Update is called once per frame
