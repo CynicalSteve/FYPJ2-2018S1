@@ -44,6 +44,7 @@ public class GameSceneControl : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.P))
             {
                 currentGameState = GameStates.STATE_PAUSED;
+                transform.parent.transform.Find("pausescreen").gameObject.SetActive(true);
             }
         }
         else if (currentGameState == GameStates.STATE_PAUSED)
@@ -51,6 +52,7 @@ public class GameSceneControl : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.P))
             {
                 currentGameState = GameStates.STATE_RUNNING;
+                GameObject.Find("pausescreen").SetActive(false);
             }
         }
     }

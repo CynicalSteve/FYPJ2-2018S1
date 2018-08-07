@@ -83,8 +83,6 @@ public class CharacterObject : MonoBehaviour
         gameObject.transform.GetChild(0).GetComponent<Image>();
 
         WeaponsEquipped.Add(new Pistol());
-        WeaponsEquipped.Add(new RPG());
-        WeaponsEquipped.Add(new Carbine());
 
         //Init player weapon sprite
         playerWeapon = gameObject.transform.Find("PlayerWeapon");
@@ -96,8 +94,8 @@ public class CharacterObject : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         defaultColour = spriteRenderer.color;
         BerserkColour = new Color(0.7803f, 0.1490f, 0.1490f, 1);
-
-        Debug.Log(PlayerPrefs.GetFloat("respawntocheckpoint"));
+        PlayerPrefs.SetString("lastloadedscene", SceneManager.GetActiveScene().name);
+        //Debug.Log(PlayerPrefs.GetFloat("respawntocheckpoint"));
         if (PlayerPrefs.GetFloat("respawntocheckpoint") >= 1)
         {
             transform.position = new Vector3(PlayerPrefs.GetFloat("respawnhere"), PlayerPrefs.GetFloat("respawnhere1"), 0);
@@ -109,8 +107,8 @@ public class CharacterObject : MonoBehaviour
     public void MainCharacterUpdate()
     {
         animator.SetInteger("states", 1);
-        charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
-        moneytext.text = "Money : " + money.ToString();
+        //charhealth.text = "Health : " + characterHealth.ToString() + "/" + "100";
+        moneytext.text = "Score : " + money.ToString();
         //Debug.Log("THIS IS THE THINGY " + PlayerPrefs.GetFloat("respawntocheckpoint"));
         //Debug.Log("WHERE THE PLAYER IS GOING TO SPAWN " + respawnpoint);
         //Debug.Log("THE CHARACTER POSITION" + transform.position);
@@ -534,7 +532,6 @@ public class CharacterObject : MonoBehaviour
             respawnpoint = other.transform.position;
             Destroy(other.gameObject);
             lol++;
-            PlayerPrefs.SetString("lastloadedscene", SceneManager.GetActiveScene().name);
             PlayerPrefs.SetFloat("savecheckpoint", lol);
             PlayerPrefs.SetFloat("respawnhere", respawnpoint.x);
             PlayerPrefs.SetFloat("respawnhere1", respawnpoint.y);
